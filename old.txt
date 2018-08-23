@@ -1,0 +1,383 @@
+import Web3 from 'web3';
+
+//const web3 = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
+const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
+
+var STARTING_BLOCK = 1891409;
+var CONTRACT_ADDRESS = "0xa117e2e59b2d323d2fd52ae0b615359e51e54de8"
+
+enum EventTypes { CastVoteEvent, DelegateVoteEvent }
+
+interface VoterRecord {
+	address: string;
+	delegatee: string;
+	delegators: any
+	voteValue: string;
+}
+
+var abi = [
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "tag",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "delegatee",
+				"type": "address"
+			}
+		],
+		"name": "DelegateTaggedVotesEvent",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"name": "value",
+				"type": "bool"
+			}
+		],
+		"name": "castVote",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "tag",
+				"type": "string"
+			},
+			{
+				"name": "delegatee",
+				"type": "address"
+			}
+		],
+		"name": "delegateTaggedVotes",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"name": "delegatee",
+				"type": "address"
+			}
+		],
+		"name": "delegateVote",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "delegatee",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "RegisterDelegateeEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "delegatee",
+				"type": "address"
+			}
+		],
+		"name": "DelegateVoteEvent",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"name": "uri",
+				"type": "string"
+			},
+			{
+				"name": "duration",
+				"type": "uint256"
+			},
+			{
+				"name": "tag",
+				"type": "string"
+			}
+		],
+		"name": "makeProposal",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "proposalId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "value",
+				"type": "bool"
+			}
+		],
+		"name": "CastVoteEvent",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "registerDelegatee",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "delegatees",
+		"outputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "proposals",
+		"outputs": [
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "title",
+				"type": "string"
+			},
+			{
+				"name": "uri",
+				"type": "string"
+			},
+			{
+				"name": "proposer",
+				"type": "address"
+			},
+			{
+				"name": "proposalDate",
+				"type": "uint256"
+			},
+			{
+				"name": "expiryDate",
+				"type": "uint256"
+			},
+			{
+				"name": "tag",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+
+var contract: any = new web3.eth.Contract(abi, CONTRACT_ADDRESS);
+
+async function makeProposal(title: string, uri: string, durationInSeconds: number) {
+		
+}
+
+async function castVote(proposalId: number, value: boolean) {
+	
+}
+
+async function delegateVote(proposalId: number, delegatee: string) {
+	
+}
+
+async function registerDelegatee(name: string)  {
+	
+}
+
+async function getActiveProposals() {
+	
+}
+
+async function getProposalResult(proposalId: number) {
+	let tally = {
+		true: 0,
+		false: 0
+	}
+	let events = this.getEvents();
+
+	let voterNetwork: any = {};
+
+	events.forEach((item)=>{
+		if (item.event === EventTypes.CastVoteEvent) {
+			let voteEvent: any = item.returnValues;
+			voterNetwork[item.voter] = {
+				address: item.voter,
+				voteValue: item.value,
+				delegatee: undefined,
+				processed: false
+			}
+		}
+		else if (item.event === EventTypes.DelegateVoteEvent) {
+			let voterRecord: VoterRecord = voterNetwork[item.voter]
+			let delegateeRecord: VoterRecord = voterNetwork[item.delegatee]	
+
+			//If there is no record for this voter, create one
+			if (voterRecord == undefined) {
+				voterRecord = {
+					address: item.voter,
+					voteValue: undefined,
+					delegatee: item.delegatee,
+					delegators: {},
+					processed: false
+				}
+				voterNetwork[item.voter] = voterRecord
+			}
+			else {
+				delete voterRecord.voteValue
+				
+				//Delete myself from my old delegatee
+				delete delegateeRecord.delegators[voterRecord.delegatee].delegators[voterRecord.address]
+				voterRecord.delegatee = item.delegatee
+			}
+			
+			//Add myself to my new delegatee
+			delegateeRecord[item.voter] = true;	
+		}		
+	})
+	for (let voterAddress: string in voterNetwork) {
+		let voterRecord: VoterRecord = voterNetwork[voterAddress]
+
+		//If this person voted, add to the tally
+		//If they are a delegatee, include all the delegators
+		if (voterRecord.voteValue !== undefined) {
+			tally[voterRecord.voteValue] += voterRecord.delegators.count + 1
+		}
+		//If they didn't vote, but have nominated a delegatee
+		else if (voterRecord.delegatee != undefined) {
+			//If they have their own delegators, pass them on to the delegatee
+			if (voterRecord.delegatee !== undefined ) {
+				voterNetwork[voterRecord.delegatee].delegators.concat(voterRecord.delegators)
+			
+			}
+		}
+		voterRecord.processed = true;
+
+	}
+
+	//Now total everything up while avoiding loops
+
+
+}
+
+async function getEvents (proposalId: number)  {
+
+	let voteEvents: Array<any> = (await contract.getPastEvents(
+		'CastVoteEvent',
+		{
+			filter: {proposalId: proposalId.toString()}, 
+			fromBlock: STARTING_BLOCK,
+			toBlock: 'latest'
+		},
+	)).filter((item)=>(item.returnValues.proposalId == proposalId))
+	console.log(voteEvents);
+	return voteEvents
+
+}
+
+window['liqd'] = {
+	makeProposal, castVote, delegateVote, registerDelegatee, getActiveProposals, getProposalResult, getEvents
+}
+
+
+
