@@ -1,6 +1,15 @@
 const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 module.exports = {
-    entry: './index.ts',
+    entry: './app/app.tsx',
+    plugins: [
+        new CleanWebpackPlugin(['public/build']),
+        new HtmlWebpackPlugin({
+          template: 'src/templates/index.html'
+        }),
+    ],
     module: {
         rules: [
             {

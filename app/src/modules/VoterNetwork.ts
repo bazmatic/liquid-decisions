@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { resolve } from 'path';
 
 //const web3 = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
 const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
@@ -8,7 +9,7 @@ var CONTRACT_ADDRESS = "0xa117e2e59b2d323d2fd52ae0b615359e51e54de8"
 
 enum EventTypes { CastVoteEvent = 'CastVoteEvent', DelegateVoteEvent = 'DelegateVoteEvent' }
 
-interface Voter {
+export type Voter = {
 	address: string
 	delegatee: Voter
 	delegators: any
@@ -16,7 +17,19 @@ interface Voter {
     processed: boolean
 }
 
-class VoterNetwork {
+export type Proposal = {
+	title: string
+	uri: string
+	duration: number
+    tag: string  
+}
+
+export type Delegatee = {
+    name: string
+    address: string
+}
+
+export class VoterNetwork {
     abi: any
     contract: any
     voterIndex: any
@@ -400,10 +413,27 @@ class VoterNetwork {
         )).filter((item)=>(item.returnValues.proposalId == this.proposalId))
 
         return voteEvents 
-    }  
+    } 
+    
+    async getDelegatees(): Promise<Delegatee[]> {
+        return new Promise<Delegatee[]>((resolve, reject) => {
+            resolve(
+                [
+                    {
+                        name: "Bob McTrustworthy",
+                        address: "0x102932093480129834234324234234234"
+                    },
+                    {
+                        name: "Greta M Acrossit",
+                        address: "0x102932093480129834234324234234234"
+                    }
+                ] 
+            )
+        })
+    }
 }
 
-window['VoterNetwork'] = VoterNetwork
+//window['VoterNetwork'] = VoterNetwork
 
 
 

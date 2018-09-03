@@ -13,7 +13,8 @@
         "moduleResolution": "node",
         "sourceMap": true,
         "strict": false,
-        "outDir": "build"
+        "outDir": "build",
+        "jsx": "react"
     },
     "exclude": [
         "node_modules",
