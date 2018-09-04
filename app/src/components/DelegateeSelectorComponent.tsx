@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ProposalComponent from './ProposalComponent'
-import {Delegatee} from '../modules/VoterNetwork'
+import {Delegatee} from '../modules/LiquidDecisions'
 
 type Props = {
     onSelect: Function

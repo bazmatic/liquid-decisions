@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Proposal, Delegatee} from '../modules/VoterNetwork'
+import {Proposal, Delegatee} from '../modules/LiquidDecisions'
 import {DelegateeSelectorComponent} from './DelegateeSelectorComponent'
 
 type Props = {

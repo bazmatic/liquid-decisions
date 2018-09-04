@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Proposal} from '../modules/VoterNetwork'
+import {Proposal} from '../modules/LiquidDecisions'
 
 type Props = {
     proposal: Proposal,

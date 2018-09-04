@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ProposalComponent from './ProposalComponent'
-import { Proposal, Delegatee } from '../modules/VoterNetwork'
+import { Proposal, Delegatee } from '../modules/LiquidDecisions'
 //im//port './ThreadViewer.css';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
     onSelect: Function
 }
 
-export default class ProposalList extends React.Component <Props, { proposals: Proposal[], delegatees: Delegatee[] }> {
+export class ProposalList extends React.Component <Props, { proposals: Proposal[], delegatees: Delegatee[] }> {
     
 	constructor(props) {
 		super(props);
