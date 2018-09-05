@@ -3,11 +3,11 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './app/app.tsx',
+    entry: './src/index.tsx',
     plugins: [
-        new CleanWebpackPlugin(['public/build']),
+        new CleanWebpackPlugin(['dist']),
         new HtmlWebpackPlugin({
-          template: 'src/templates/index.html'
+          template: './src/templates/index.html'
         }),
     ],
     module: {
@@ -20,7 +20,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js", ".json"]
     },
     output: {
         filename: 'bundle.js',

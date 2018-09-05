@@ -1,12 +1,12 @@
 import Web3 from 'web3';
-var contractJson = require('../../../contracts/LiquidDecisions.json')
+var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 
-const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
-//const web3 = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
+//const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
+const web3 = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
 
 var STARTING_BLOCK = 1891409;
 const abi = contractJson.abi
-const contract: any = new web3.eth.Contract(abi, abi.deployedAddress)
+const contract: any = new web3.eth.Contract(abi, contractJson.networks['4'].address)
 //const contractWriter = uport.contract(abi).at(abi.deployedAddress);
 
 
@@ -76,7 +76,7 @@ export namespace Contract {
                     let delegatees: Delegatee[] = []
             
                     for (let i=0; i< count; i++) {
-                        let delegatee: Delegatee = await this.contract.methods.delegatees(i).call()
+                        let delegatee: Delegatee = await contract.methods.delegatees(i).call()
                         delegatee.key = i;
                         delegatees.push(delegatee);
                     }
@@ -97,7 +97,7 @@ export namespace Contract {
                 let proposals: Proposal[] = []
         
                 for (let i=0; i< count; i++) {
-                    let proposal: Proposal = await this.contract.methods.proposals(i).call()
+                    let proposal: Proposal = await contract.methods.proposals(i).call()
                     proposals.push(proposal);
                 }
                 resolve(proposals)

@@ -4,7 +4,11 @@
   "description": "Simple delegated voting via Ethereum",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config=./app/webpack.config.js --context=./app --mode=development",
+    "start-dev": "webpack-dev-server --config=./app/webpack.config.js  --context=./app --mode=development",
+    "compile": "truffle compile",
+    "deploy": "truffle deploy"
   },
   "author": "Barry Earsman",
   "license": "ISC",
@@ -15,14 +19,20 @@
     "bignumber.js": "^7.2.1",
     "common-js": "^0.3.8",
     "react": "^16.4.2",
+    "react-dom": "^16.4.2",
     "web3": "^1.0.0-beta.35"
   },
   "devDependencies": {
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
+    "clean-webpack-plugin": "^0.1.19",
+    "html-webpack-plugin": "^3.2.0",
+    "truffle-hdwallet-provider": "0.0.6",
     "ts-loader": "^4.5.0",
+    "typescript": "^3.0.3",
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0",
-    "webpack-command": "^0.4.1"
+    "webpack-command": "^0.4.1",
+    "webpack-dev-server": "^3.1.7"
   }
 }

@@ -4,11 +4,8 @@ import { ProposalList } from './ProposalListComponent'
 import { ProposalResolver } from '../modules/ProposalResolver'
 import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
 
-//const IpfsAPI = require('./lib/ipfs-api/dist/index.js');
-const IpfsAPI = require('ipfs-api')
-
 //import { threadAddress } from './contracts/thread.js';
-var ContractBuild = require('./contracts/LiquidDecisions.json')
+var ContractBuild = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 const threadAbi = ContractBuild.abi;
 
 const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
@@ -24,7 +21,7 @@ type AppState = {
     delegatees: Delegatee[]
 }
 
-class App extends React.Component <{}, AppState> {
+export class App extends React.Component <{}, AppState> {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {

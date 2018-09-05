@@ -1,8 +1,7 @@
 pragma solidity ^0.4.0;
 contract LiquidDecisions {
-    
-    uint proposalCount;
-    uint delegateeCount;
+    uint public proposalCount;
+    uint public delegateeCount;
 
     struct Proposal {
         uint id;
