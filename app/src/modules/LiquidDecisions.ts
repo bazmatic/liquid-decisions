@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { resolve } from 'url';
 var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
@@ -53,8 +54,17 @@ export namespace Contract {
         return events 
     }
 
-    export function makeProposal(title: string, uri: string, duration: number, tag: string) {     
-        contractWriter.makeProposal(title, uri, duration, tag, (err: any) => { console.log(err || "Good")})
+    export function makeProposal(title: string, uri: string, duration: number, tag: string): Promise<any> {  
+        return new Promise((resolve, reject) => {
+            contractWriter.makeProposal(title, uri, duration, tag, (err: Error, data: any) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
+        })  
     }
 
     export function castVote(proposalId: number, value: boolean) {

@@ -33,8 +33,9 @@ export class ProposalNew extends React.Component <Props, any> {
         this.setState(stateUpdate)
     }
 
-    save() {
-        LiquidDecisions.Contract.makeProposal(this.state.title, this.state.uri, this.state.duration, this.state.tag)
+    async save() {
+        let result = await LiquidDecisions.Contract.makeProposal(this.state.title, this.state.uri, this.state.duration, this.state.tag)
+        console.log("Sent proposal:", result)
     }
 
     public render(): React.ReactNode {
