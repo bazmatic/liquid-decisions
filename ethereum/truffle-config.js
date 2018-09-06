@@ -12,7 +12,27 @@
  *   },
  */
 
+const HDWalletProvider = require('truffle-hdwallet-provider')
+const mnemonic = 'volume armor grid enroll lend task find because frame rhythm isolate phone'
+
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
+  networks: {
+    rinkeby: {
+      provider: function() { 
+        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk') 
+      },
+      network_id: '3',
+      gas: 4500000,
+      gasPrice: 10000000000,
+    },
+    development: {
+        host: "localhost",
+        port: 7545,
+        network_id: "5777" // Match any network id
+    }
+
+  },
+
 };

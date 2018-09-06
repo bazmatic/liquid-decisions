@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './App.css';
 import { ProposalList } from './ProposalListComponent'
+import { ProposalNew } from './ProposalNewComponent'
 import { ProposalResolver } from '../modules/ProposalResolver'
 import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
 
@@ -11,7 +12,11 @@ const threadAbi = ContractBuild.abi;
 const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 //const CONTRACT_ADDRESS = '0xfe6197115746cbb352cfffab1b4a646b6c3ef0d1';// '0x7ad8652e160c13bd849a7cf671106150884be92f';
 
-const Pages = {	HomePage: 'HomePage', ProposalListPage: 'ProposePage'}
+const Pages = {
+	HomePage: 'HomePage',
+	ProposalListPage: 'ProposePage',
+	ProposalNewPage: 'ProposalNewPage'
+}
 
 //--------
 
@@ -25,7 +30,8 @@ export class App extends React.Component <{}, AppState> {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
-            page: Pages.ProposalListPage,
+			page: Pages.ProposalListPage,
+			//page: Pages.ProposalNewPage,
             proposals: [],
             delegatees: []
         }
@@ -48,13 +54,21 @@ export class App extends React.Component <{}, AppState> {
 		) 
 	}
 
-	proposalsListPage() {
+	proposalListPage() {
 		return (
 			<div className="page">
                 <ProposalList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} proposals={this.state.proposals} />					
 			</div>
 		)
-    }
+	}
+	proposalNewPage() {
+		return (
+			<div className="page">
+				New proposal
+				<ProposalNew></ProposalNew>
+			</div>
+		)
+	}
     
 	choosePage(pageId) {
 		console.log("Choosing page", pageId)
@@ -74,12 +88,17 @@ export class App extends React.Component <{}, AppState> {
 	
 	render() {
 		let content
-        console.log("App.render()", this.state)
-        
+		console.log("App.render()", this.state)
+
         if (this.state.page == Pages.ProposalListPage) {
-            content = this.proposalsListPage()
-        }
-        else {
+            content = this.proposalListPage()
+		}
+		else if (this.state.page == Pages.ProposalNewPage)
+		{
+            content = this.proposalNewPage()
+		}
+		else 
+		{
             content = this.homePage()
         }
 

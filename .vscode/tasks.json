@@ -14,6 +14,13 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "npm",
+            "script": "start-dev",
+            "problemMatcher": [
+                "$go"
+            ]
         }
     ]
 }

@@ -2,11 +2,16 @@ import Web3 from 'web3';
 var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
-const web3 = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
+//const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
+const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"))
+const web3Writer = window['web3']
+
+const NETWORK_ID = "5777" //4
 
 var STARTING_BLOCK = 1891409;
 const abi = contractJson.abi
-const contract: any = new web3.eth.Contract(abi, contractJson.networks['4'].address)
+const contractReader: any = new web3Reader.eth.Contract(abi, contractJson.networks[NETWORK_ID].address)
+const contractWriter: any = web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
 //const contractWriter = uport.contract(abi).at(abi.deployedAddress);
 
 
@@ -49,34 +54,34 @@ export namespace Contract {
     }
 
     export function makeProposal(title: string, uri: string, duration: number, tag: string) {     
-        contract.makeProposal(title, uri, duration, tag)
+        contractWriter.makeProposal(title, uri, duration, tag, (err: any) => { console.log(err || "Good")})
     }
 
     export function castVote(proposalId: number, value: boolean) {
-        contract.castVote(proposalId, value)
+        contractWriter.castVote(proposalId, value)
     }
 
     export function delegateVote(proposalId: number, delegatee: string) {
-        contract.delegateVote(proposalId, delegatee)
+        contractWriter.delegateVote(proposalId, delegatee)
     }
 
     export  function delegateTaggedVotes(tag: string, delegatee: string) {
-        contract.delegateTaggedVotes(tag, delegatee)
+        contractWriter.delegateTaggedVotes(tag, delegatee)
     }
 
     export function registerDelegatee(name: string) {
-        contract.registerDelegatee(name)
+        contractWriter.registerDelegatee(name)
     }
 
     export async function getDelegatees(): Promise<Delegatee[]> {
 
             return new Promise<Delegatee[]>(async (resolve, reject) => {
                 try {
-                    let count = parseInt(await contract.methods.delegateeCount().call(), 10);
+                    let count = parseInt(await contractReader.methods.delegateeCount().call(), 10);
                     let delegatees: Delegatee[] = []
             
                     for (let i=0; i< count; i++) {
-                        let delegatee: Delegatee = await contract.methods.delegatees(i).call()
+                        let delegatee: Delegatee = await contractReader.methods.delegatees(i).call()
                         delegatee.key = i;
                         delegatees.push(delegatee);
                     }
@@ -93,11 +98,11 @@ export namespace Contract {
 
         return new Promise<Proposal[]>(async (resolve, reject) => {
             try {
-                let count = parseInt(await contract.methods.proposalCount().call(), 10);
+                let count = parseInt(await contractReader.methods.proposalCount().call(), 10);
                 let proposals: Proposal[] = []
         
                 for (let i=0; i< count; i++) {
-                    let proposal: Proposal = await contract.methods.proposals(i).call()
+                    let proposal: Proposal = await contractReader.methods.proposals(i).call()
                     proposals.push(proposal);
                 }
                 resolve(proposals)
