@@ -1,7 +1,10 @@
 import * as React from 'react';
 import './App.css';
+import { DelegateeEdit } from './DelegateeEditComponent'
+import { DelegateeList } from './DelegateeListComponent'
 import { ProposalList } from './ProposalListComponent'
 import { ProposalNew } from './ProposalNewComponent'
+import { ProposalVote } from './ProposalVoteComponent'
 import { ProposalResolver } from '../modules/ProposalResolver'
 import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
 
@@ -14,8 +17,11 @@ const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 
 const Pages = {
 	HomePage: 'HomePage',
-	ProposalListPage: 'ProposePage',
-	ProposalNewPage: 'ProposalNewPage'
+	ProposalListPage: 'ProposalListPage',
+	ProposalNewPage: 'ProposalNewPage',
+	ProposalPage: 'ProposalPage',
+	DelegateeListPage: 'DelegateeListPage',
+	DelegateePage: 'DelegateePage',
 }
 
 //--------
@@ -23,10 +29,14 @@ const Pages = {
 type AppState = {
     page: string,
     proposals: Proposal[],
-    delegatees: Delegatee[]
+	delegatees: Delegatee[],
+	currentProposal?: Proposal
 }
 
 export class App extends React.Component <{}, AppState> {
+
+	private pageLookup: any
+
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
@@ -34,7 +44,14 @@ export class App extends React.Component <{}, AppState> {
 			//page: Pages.ProposalNewPage,
             proposals: [],
             delegatees: []
-        }
+		}
+		this.pageLookup = {}
+		this.pageLookup[Pages.ProposalListPage] = this.proposalListPage.bind(this)
+		this.pageLookup[Pages.ProposalNewPage] = this.proposalNewPage.bind(this)
+		this.pageLookup[Pages.DelegateeListPage] = this.delegateeListPage.bind(this)
+		this.pageLookup[Pages.DelegateePage] = this.delegateePage.bind(this)
+		this.pageLookup[Pages.ProposalPage] = this.proposalPage.bind(this)
+		debugger
 	}
 
 	async componentDidMount() {	
@@ -54,6 +71,14 @@ export class App extends React.Component <{}, AppState> {
 		) 
 	}
 
+	proposalPage() {
+		return (
+			<div className="page">
+                <ProposalVote delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
+			</div>
+		)		
+	}
+
 	proposalListPage() {
 		return (
 			<div className="page">
@@ -69,12 +94,27 @@ export class App extends React.Component <{}, AppState> {
 			</div>
 		)
 	}
+
+	delegateeListPage() {
+		return (
+			<div className="page">
+     			<DelegateeList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} />           				
+			</div>
+		)
+	}
+
+	delegateePage() {
+		return (
+			<div className="page">
+                <DelegateeEdit onSave={this.choosePage.bind(this, Pages.ProposalListPage)}  />					
+			</div>
+		)
+	}
     
 	choosePage(pageId) {
 		console.log("Choosing page", pageId)
-		if (Pages[pageId]) {
-			console.log('Set state', {page: pageId})
-			console.log('Current page state', this.state.page)
+
+		if (Pages[pageId] && this.pageLookup[pageId]) {
 			this.setState({page: pageId})
 		}
 		else {
@@ -82,28 +122,29 @@ export class App extends React.Component <{}, AppState> {
 		}
     }
     
-    onSelectProposal(proposal: Proposal) {
-        console.log('Selected proposal', proposal)
+    onSelectProposal(currentProposal: Proposal) {
+		console.log('Selected proposal', currentProposal)
+		this.setState({currentProposal})
+		this.choosePage(Pages.ProposalPage)
     }
 	
 	render() {
-		let content
-		console.log("App.render()", this.state)
-
-        if (this.state.page == Pages.ProposalListPage) {
-            content = this.proposalListPage()
+		let content = ""
+		try {
+			content = this.pageLookup[this.state.page]()
 		}
-		else if (this.state.page == Pages.ProposalNewPage)
-		{
-            content = this.proposalNewPage()
+		catch(e) {
+			console.error(`No page content found. Selected page: {$this.state.page}`)
 		}
-		else 
-		{
-            content = this.homePage()
-        }
-
+		
 		return (	
 			<div className="App">
+				<ul className="menu">
+					<li><a onClick={this.choosePage.bind(this, Pages.ProposalListPage)}>Proposals</a></li>
+					<li><a onClick={this.choosePage.bind(this, Pages.ProposalNewPage)}>New Proposal</a></li>
+					<li><a onClick={this.choosePage.bind(this, Pages.DelegateeListPage)}>Delegatees</a></li>
+					<li><a onClick={this.choosePage.bind(this, Pages.DelegateePage)}>Delegatee</a></li>
+				</ul>
 				{content}
 			</div>
 		)

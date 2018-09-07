@@ -25,6 +25,7 @@ export type Voter = {
 }
 
 export type Proposal = {
+    id?: number
     title: string
     uri: string
     duration: number

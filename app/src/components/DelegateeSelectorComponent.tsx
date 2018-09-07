@@ -1,5 +1,5 @@
 import * as React from 'react'
-import ProposalComponent from './ProposalComponent'
+import ProposalLineComponent from './ProposalLineComponent'
 import {Delegatee} from '../modules/LiquidDecisions'
 
 type Props = {
@@ -20,6 +20,7 @@ export class DelegateeSelectorComponent extends React.Component <Props, { delega
     }
 
     public selectItem(delegatee: Delegatee) {
+        console.log("Delegating to", delegatee)
         this.props.onSelect(delegatee)
     }
 
@@ -31,8 +32,7 @@ export class DelegateeSelectorComponent extends React.Component <Props, { delega
         delegatees = this.state.delegatees.map((delegateeData: Delegatee)=>{
             number ++;
             return <ul className="delegatee">
-                <li onClick={this.selectItem.bind}>{delegateeData.name} {delegateeData.address}</li>
-            
+                <li onClick={this.selectItem.bind(this, delegateeData)}>{delegateeData.name} {delegateeData.address}</li>       
             </ul>
         });   
                 

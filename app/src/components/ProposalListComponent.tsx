@@ -1,5 +1,5 @@
 import * as React from 'react'
-import ProposalComponent from './ProposalComponent'
+import ProposalLineComponent from './ProposalLineComponent'
 import { Proposal, Delegatee } from '../modules/LiquidDecisions'
 //im//port './ThreadViewer.css';
 
@@ -32,7 +32,7 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
 
         proposals = this.state.proposals.map((proposalData: Proposal)=>{
             number ++;
-            return <ProposalComponent onSelect={this.selectItem.bind(this)} proposal={proposalData} />
+            return <ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} />
         });   
         console.log(proposals.length, "proposals");  
                      

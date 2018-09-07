@@ -1,20 +1,20 @@
 import * as React from 'react';
-import {Proposal, Delegatee} from '../modules/LiquidDecisions'
-import {DelegateeSelectorComponent} from './DelegateeSelectorComponent'
+import * as LiquidDecisions from '../modules/LiquidDecisions'
+import { DelegateeSelectorComponent } from './DelegateeSelectorComponent'
 
 type Props = {
-    proposal: Proposal
+    proposal: LiquidDecisions.Proposal,
+    delegatees: LiquidDecisions.Delegatee[]
 }
 
-export default class ProposalVoteComponent extends React.Component <Props, { proposal: Proposal }> {
-
-    data: Proposal
-    delegatees: Delegatee[] = []
+export class ProposalVote extends React.Component <Props, { proposal: LiquidDecisions.Proposal, delegatees?: LiquidDecisions.Delegatee[], selectedDelegatee?: LiquidDecisions.Delegatee }> {
 
 	constructor(props) {
 		super(props);
 		this.state = {
-            proposal: props.proposal || {}
+            proposal: props.proposal || {},
+            delegatees: props.delegatees || [],
+            selectedDelegatee: undefined
         }
     }
 
@@ -22,36 +22,44 @@ export default class ProposalVoteComponent extends React.Component <Props, { pro
         this.setState(newProps);
     }
 
-    public voteYes() {
-
+    private async vote(value: boolean) {
+        let result = await LiquidDecisions.Contract.castVote(this.state.proposal.id, value)
     }
 
-    public voteNo() {
-
+    private async delegateVote() {
+        if (this.state.selectedDelegatee !== undefined) {
+            let result = await LiquidDecisions.Contract.delegateVote(this.state.proposal.id, this.state.selectedDelegatee.address)    
+        }
+        else {
+            console.log('No selected delegatee')
+        }
     }
 
-    public delegateVote(delegatee: Delegatee) {
-
+    private async onSelectDelegatee(selectedDelegatee: LiquidDecisions.Delegatee) {
+        debugger
+        this.setState({selectedDelegatee})
     }
 
     public render(): React.ReactNode {
 
         if (!this.state.proposal) {
-            return <div className="proposal"></div>
+            return <div className="stitch"></div>
         } 
         else {
+            let delegationContent
+            if (this.state.selectedDelegatee == undefined) {
+                delegationContent = <DelegateeSelectorComponent delegatees={this.state.delegatees} onSelect={this.onSelectDelegatee.bind(this)} />
+            }
+            else {
+                delegationContent = <button onClick={this.delegateVote.bind(this)}>Delegate to {this.state.selectedDelegatee.name}</button>
+            }
             return (
                 <div className="proposal">
-                    <h3>{this.state.proposal.title}</h3>
+                    <h3>{this.state.proposal.id}. {this.state.proposal.title}</h3>
                     <a href={this.state.proposal.uri}>More info</a>
-                    <a className="btn" onClick={this.voteYes.bind(this)}>
-						Vote YES
-					</a> 
-                    <a className="btn" onClick={this.voteNo.bind(this)}>
-						Vote NO
-					</a> 
-                    <DelegateeSelectorComponent delegatees={this.delegatees} onSelect={(delegatee: Delegatee)=>{this.delegateVote(delegatee)}} />
-
+                    <button onClick={this.vote.bind(this, true)}>Vote YES</button>
+                    <button onClick={this.vote.bind(this, false)}>Vote NO</button>
+                    {delegationContent}              
                 </div>
             )
         }

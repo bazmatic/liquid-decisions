@@ -8,7 +8,7 @@
     "build": "webpack --config=./app/webpack.config.js --context=./app --mode=development",
     "start-dev": "webpack-dev-server --config=./app/webpack.config.js  --context=./app --mode=development",
     "compile": "truffle compile",
-    "deploy": "truffle deploy"
+    "deploy": "truffle --reset deploy"
   },
   "author": "Barry Earsman",
   "license": "ISC",
