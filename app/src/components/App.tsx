@@ -7,6 +7,11 @@ import { ProposalNew } from './ProposalNewComponent'
 import { ProposalVote } from './ProposalVoteComponent'
 import { ProposalResolver } from '../modules/ProposalResolver'
 import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
+import AppBar from '@material-ui/core/AppBar'
+//import Toolbar from '@material-ui/core/Toolbar'
+//import Typography from '@material-ui/core/Typography'
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 //import { threadAddress } from './contracts/thread.js';
 var ContractBuild = require('../../../ethereum/build/contracts/LiquidDecisions.json')
@@ -51,7 +56,6 @@ export class App extends React.Component <{}, AppState> {
 		this.pageLookup[Pages.DelegateeListPage] = this.delegateeListPage.bind(this)
 		this.pageLookup[Pages.DelegateePage] = this.delegateePage.bind(this)
 		this.pageLookup[Pages.ProposalPage] = this.proposalPage.bind(this)
-		debugger
 	}
 
 	async componentDidMount() {	
@@ -110,6 +114,10 @@ export class App extends React.Component <{}, AppState> {
 			</div>
 		)
 	}
+
+	onChangeTab(event, value) {
+		this.choosePage(value)
+	}
     
 	choosePage(pageId) {
 		console.log("Choosing page", pageId)
@@ -139,12 +147,22 @@ export class App extends React.Component <{}, AppState> {
 		
 		return (	
 			<div className="App">
-				<ul className="menu">
-					<li><a onClick={this.choosePage.bind(this, Pages.ProposalListPage)}>Proposals</a></li>
-					<li><a onClick={this.choosePage.bind(this, Pages.ProposalNewPage)}>New Proposal</a></li>
-					<li><a onClick={this.choosePage.bind(this, Pages.DelegateeListPage)}>Delegatees</a></li>
-					<li><a onClick={this.choosePage.bind(this, Pages.DelegateePage)}>Delegatee</a></li>
-				</ul>
+				<AppBar position="static">
+					<Tabs
+						value={Pages.ProposalListPage}
+						onChange={this.onChangeTab.bind(this)}
+						indicatorColor="primary"
+						textColor="primary"
+						scrollable
+						scrollButtons="auto"
+					>
+						<Tab value={Pages.ProposalListPage} label="Proposals" />
+						<Tab value={Pages.ProposalNewPage} label="New Proposal" />
+						<Tab value={Pages.DelegateeListPage} label="Delegatees" />
+						<Tab value={Pages.DelegateePage} label="Delegatee" />
+					</Tabs>
+				</AppBar>
+
 				{content}
 			</div>
 		)
