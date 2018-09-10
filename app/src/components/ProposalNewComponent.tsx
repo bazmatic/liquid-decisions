@@ -1,9 +1,11 @@
 import * as React from 'react';
 import {Proposal} from '../modules/LiquidDecisions'
 import * as LiquidDecisions from '../modules/LiquidDecisions'
+//import Grid from '@material-ui/core/Grid' 
+import { TextField, Button, Paper, Grid } from '@material-ui/core'
 
 type Props = {
-    //onSave: Function | undefined
+    onSave: Function | undefined
     //onCancel: Function | undefined
 }
 
@@ -13,13 +15,11 @@ export class ProposalNew extends React.Component <Props, any> {
 	constructor(props) {
 		super(props);
 		this.state = {
-            title: 'Title',
+            title: '',
             uri: '',
-            duration: 0,
+            duration: 7,
             tag: ''     
         }
-        //this.handleChange = this.handleChange.bind(this)
-        //this.save = this.save.bind(this)
     }
 
     componentWillReceiveProps(newProps) {
@@ -36,31 +36,44 @@ export class ProposalNew extends React.Component <Props, any> {
     async save() {
         let result = await LiquidDecisions.Contract.makeProposal(this.state.title, this.state.uri, this.state.duration, this.state.tag)
         console.log("Sent proposal:", result)
+        //TODO: Use Drizzle to wait for confirmation
+        if (this.props.onSave !== undefined) {
+            this.props.onSave(result)
+        }
     }
 
     public render(): React.ReactNode {
         return (
-            <div className="proposalNew">
-                <form>
-                    <label>
-                        Title
-                        <input type="text" name="title" value={this.state.title} onChange={this.handleChange.bind(this)} />
-                    </label>
-                    <label>
-                        URL
-                        <input type="text" name="uri" value={this.state.uri} onChange={this.handleChange.bind(this)} />
-                    </label>
-                    <label>
-                        Duration
-                        <input type="number" name="duration" value={this.state.duration} onChange={this.handleChange.bind(this)} />
-                    </label>
-                    <label>
-                        Tag
-                        <input type="text" name="tag" value={this.state.tag} onChange={this.handleChange.bind(this)} />
-                    </label>
-                </form>
-                <button onClick={this.save.bind(this)}>Save</button>
-            </div>
+  
+            <Grid
+                container
+                direction="row"
+                alignItems="stretch"
+                spacing={24}
+                >
+
+                <Grid item lg={12} md={12} xl={12} xs={12}>
+                    <TextField label="Title" name="title" value={this.state.title} onChange={this.handleChange.bind(this)} fullWidth={true}  />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField label="URL" name="uri" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField label="Duration (days)" type="number" name="duration" value={this.state.duration} onChange={this.handleChange.bind(this)} fullWidth={true}  />  
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField label="Tag" type="text" name="tag" value={this.state.tag} onChange={this.handleChange.bind(this)} fullWidth={true}  />
+                </Grid>
+     
+                <Grid item xs={6}>
+                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
+                </Grid>
+                <Grid item xs={6}>
+                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
+                </Grid>
+    
+   
+            </Grid>
         )
     }
 }

@@ -20,6 +20,9 @@ const threadAbi = ContractBuild.abi;
 const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 //const CONTRACT_ADDRESS = '0xfe6197115746cbb352cfffab1b4a646b6c3ef0d1';// '0x7ad8652e160c13bd849a7cf671106150884be92f';
 
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import * as themeColors from '@material-ui/core/colors'
+
 const Pages = {
 	HomePage: 'HomePage',
 	ProposalListPage: 'ProposalListPage',
@@ -45,8 +48,8 @@ export class App extends React.Component <{}, AppState> {
 	constructor(props, context) {
 		super(props, context);
 		this.state = {
-			page: Pages.ProposalListPage,
-			//page: Pages.ProposalNewPage,
+			//page: Pages.ProposalListPage,
+			page: Pages.ProposalNewPage,
             proposals: [],
             delegatees: []
 		}
@@ -66,13 +69,29 @@ export class App extends React.Component <{}, AppState> {
 		let delegatees = await Contract.getDelegatees()
 		let proposals = await Contract.getProposals()
         this.setState({delegatees, proposals}) 
-    }
+	}
+	
+	private getTheme() {
+		return createMuiTheme({
+			palette: {
+			  secondary: {
+				light: '#CCC',
+				main: '#000',
+				dark: themeColors.blue["50"],
+				contrastText: 'red',
+			  },
+			  primary: {
+				light: '#ff7961',
+				main: '#fff',
+				dark: '#555',
+				contrastText: '#CCC',
+			  },
+			},
+		});
+	}
 
 	homePage() {
-		return (
-			<div className="page">
-			</div>
-		) 
+		return this.proposalListPage()
 	}
 
 	proposalPage() {
@@ -93,8 +112,7 @@ export class App extends React.Component <{}, AppState> {
 	proposalNewPage() {
 		return (
 			<div className="page">
-				New proposal
-				<ProposalNew></ProposalNew>
+				<ProposalNew onSave={this.choosePage.bind(this, Pages.HomePage)}></ProposalNew>
 			</div>
 		)
 	}
@@ -110,7 +128,7 @@ export class App extends React.Component <{}, AppState> {
 	delegateePage() {
 		return (
 			<div className="page">
-                <DelegateeEdit onSave={this.choosePage.bind(this, Pages.ProposalListPage)}  />					
+                <DelegateeEdit onSave={this.choosePage.bind(this, Pages.HomePage)}  />					
 			</div>
 		)
 	}
@@ -137,6 +155,7 @@ export class App extends React.Component <{}, AppState> {
     }
 	
 	render() {
+
 		let content = ""
 		try {
 			content = this.pageLookup[this.state.page]()
@@ -144,26 +163,29 @@ export class App extends React.Component <{}, AppState> {
 		catch(e) {
 			console.error(`No page content found. Selected page: {$this.state.page}`)
 		}
+		const theme = this.getTheme()
 		
-		return (	
+		return (
+	
 			<div className="App">
-				<AppBar position="static">
-					<Tabs
-						value={Pages.ProposalListPage}
-						onChange={this.onChangeTab.bind(this)}
-						indicatorColor="primary"
-						textColor="primary"
-						scrollable
-						scrollButtons="auto"
-					>
-						<Tab value={Pages.ProposalListPage} label="Proposals" />
-						<Tab value={Pages.ProposalNewPage} label="New Proposal" />
-						<Tab value={Pages.DelegateeListPage} label="Delegatees" />
-						<Tab value={Pages.DelegateePage} label="Delegatee" />
-					</Tabs>
-				</AppBar>
-
+				<MuiThemeProvider theme={theme}>
+					<AppBar position="static">
+						<Tabs
+							value={this.state.page}
+							onChange={this.onChangeTab.bind(this)}
+							indicatorColor="secondary"
+							textColor="secondary"
+							scrollable
+							scrollButtons="auto"
+						>						
+							<Tab value={Pages.ProposalNewPage} label="New Proposal" />
+							<Tab value={Pages.DelegateeListPage} label="Delegatees" />
+							<Tab value={Pages.DelegateePage} label="Delegatee" />
+							<Tab value={Pages.ProposalListPage} label="Proposals" />
+						</Tabs>
+					</AppBar>
 				{content}
+				</MuiThemeProvider>
 			</div>
 		)
 	}

@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Grid, TextField, Button, Paper } from '@material-ui/core'
 import {Proposal} from '../modules/LiquidDecisions'
 import * as LiquidDecisions from '../modules/LiquidDecisions'
+
 
 type Props = {
     onSave: Function | undefined
@@ -32,23 +34,33 @@ export class DelegateeEdit extends React.Component <Props, any> {
     async save() {
         let result = await LiquidDecisions.Contract.registerDelegatee(this.state.name)
         console.log("Sent delegatee:", result)
+        if (this.props.onSave !== undefined) {
+            this.props.onSave(result)
+        }
     }
 
     public render(): React.ReactNode {
         return (
-            <div className="delegateeNew">
-                <form>
-                    <label>
-                        Name
-                        <input type="text" name="name" value={this.state.name} onChange={this.handleChange.bind(this)} />
-                    </label>
-                    <label>
-                        Email
-                        <input type="text" name="email" value={this.state.email} onChange={this.handleChange.bind(this)} />
-                    </label>
-                </form>
-                <button onClick={this.save.bind(this)}>Save</button>
-            </div>
+            <Grid
+            container
+            direction="row"
+            alignItems="stretch"
+            spacing={24}
+            >
+                <Grid item xs={12}>
+                    <TextField label="Your name" type="text" name="name" value={this.state.name} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField label="Your email" name="email" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                </Grid>
+                     
+                <Grid item xs={6}>
+                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
+                </Grid>
+                <Grid item xs={6}>
+                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
+                </Grid>
+            </Grid>
         )
     }
 }
