@@ -40,26 +40,28 @@ export class DelegateeEdit extends React.Component <Props, any> {
 
     public render(): React.ReactNode {
         return (
-            <Grid
-            container
-            direction="row"
-            alignItems="stretch"
-            spacing={24}
-            >
-                <Grid item xs={12}>
-                    <TextField label="Your name" type="text" name="name" value={this.state.name} onChange={this.handleChange.bind(this)} fullWidth={true} />
+            <Paper>
+                <Grid
+                container
+                direction="row"
+                alignItems="stretch"
+                spacing={24}
+                >
+                    <Grid item xs={12}>
+                        <TextField label="Your name" type="text" name="name" value={this.state.name} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField label="Your email" name="email" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                    </Grid>
+                        
+                    <Grid item xs={6}>
+                        <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="Your email" name="email" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
-                </Grid>
-                     
-                <Grid item xs={6}>
-                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
-                </Grid>
-                <Grid item xs={6}>
-                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
-                </Grid>
-            </Grid>
+            </Paper>
         )
     }
 }

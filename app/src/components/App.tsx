@@ -90,6 +90,13 @@ export class App extends React.Component <{}, AppState> {
 				contrastText: '#CCC',
 			  },
 			},
+			overrides: {
+				MuiPaper: {
+					root: {
+						padding: "1em",
+					}
+				},
+			}
 		});
 	}
 

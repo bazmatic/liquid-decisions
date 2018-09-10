@@ -42,36 +42,35 @@ export class ProposalNew extends React.Component <Props, any> {
 
     public render(): React.ReactNode {
         return (
-  
-            <Grid
-                container
-                direction="row"
-                alignItems="stretch"
-                spacing={24}
-                >
+            <Paper>
+                <Grid
+                    container
+                    direction="row"
+                    alignItems="stretch"
+                    spacing={24}
+                    >
 
-                <Grid item lg={12} md={12} xl={12} xs={12}>
-                    <TextField label="Title" name="title" value={this.state.title} onChange={this.handleChange.bind(this)} fullWidth={true}  />
+                    <Grid item lg={12} md={12} xl={12} xs={12}>
+                        <TextField label="Title" name="title" value={this.state.title} onChange={this.handleChange.bind(this)} fullWidth={true}  />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField label="URL" name="uri" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField label="Duration (days)" type="number" name="duration" value={this.state.duration} onChange={this.handleChange.bind(this)} fullWidth={true}  />  
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField label="Tag" type="text" name="tag" value={this.state.tag} onChange={this.handleChange.bind(this)} fullWidth={true}  />
+                    </Grid>
+        
+                    <Grid item xs={6}>
+                        <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="URL" name="uri" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField label="Duration (days)" type="number" name="duration" value={this.state.duration} onChange={this.handleChange.bind(this)} fullWidth={true}  />  
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField label="Tag" type="text" name="tag" value={this.state.tag} onChange={this.handleChange.bind(this)} fullWidth={true}  />
-                </Grid>
-     
-                <Grid item xs={6}>
-                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Save</Button>
-                </Grid>
-                <Grid item xs={6}>
-                    <Button fullWidth={true} onClick={this.save.bind(this)} variant="outlined" color="secondary">Cancel</Button>
-                </Grid>
-    
-   
-            </Grid>
+            </Paper>
         )
     }
 }

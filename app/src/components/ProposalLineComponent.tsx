@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {Proposal} from '../modules/LiquidDecisions'
 import { Button, Card, Typography, IconButton } from '@material-ui/core'
-import * as Icons from '@material-ui/icons'
+import {HowToVote} from '@material-ui/icons'
 import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 
@@ -59,7 +58,7 @@ export default class ProposalLineComponent extends React.Component <Props, { pro
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button fullWidth={true} onClick={this.onSelect.bind(this)} variant="outlined" color="secondary"> <Icons.HowToVote /> Vote</Button>
+                        <Button fullWidth={true} onClick={this.onSelect.bind(this)} variant="outlined" color="secondary"> <HowToVote /> Vote</Button>
                     </CardActions>              
                </Card>
             )

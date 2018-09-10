@@ -1,6 +1,7 @@
 import * as React from 'react'
 import ProposalLineComponent from './ProposalLineComponent'
 import { Proposal, Delegatee } from '../modules/LiquidDecisions'
+import { Paper, Typography, Grid } from '@material-ui/core';
 //im//port './ThreadViewer.css';
 
 type Props = {
@@ -32,14 +33,17 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
 
         proposals = this.state.proposals.map((proposalData: Proposal)=>{
             number ++;
-            return <ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} />
-        });   
-        console.log(proposals.length, "proposals");  
+            return <Grid item><ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} /></Grid>
+        });    
                      
 		return (
-			<div className="ProposalList">
-                {proposals.length} proposals
-                {proposals}
+			<div>
+                <Typography variant="headline">
+                    {proposals.length} proposals
+                </Typography>
+                <Grid container direction="column" spacing={16}>
+                    {proposals}
+                </Grid>
 			</div>
 		);
     }
