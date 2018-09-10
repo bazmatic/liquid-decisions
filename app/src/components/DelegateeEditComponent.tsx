@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Grid, TextField, Button, Paper } from '@material-ui/core'
-import {Proposal} from '../modules/LiquidDecisions'
 import * as LiquidDecisions from '../modules/LiquidDecisions'
 
 

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import {Proposal} from '../modules/LiquidDecisions'
 import * as LiquidDecisions from '../modules/LiquidDecisions'
-//import Grid from '@material-ui/core/Grid' 
 import { TextField, Button, Paper, Grid } from '@material-ui/core'
 
 type Props = {

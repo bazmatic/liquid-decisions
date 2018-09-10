@@ -8,7 +8,7 @@ const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:75
 const web3Writer = window['web3']
 
 const NETWORK_ID = "5777" //4
-
+var SEC_DAY = 60 * 60 * 24
 var STARTING_BLOCK = 1891409;
 const abi = contractJson.abi
 const contractReader: any = new web3Reader.eth.Contract(abi, contractJson.networks[NETWORK_ID].address)
@@ -29,6 +29,9 @@ export type Proposal = {
     title: string
     uri: string
     duration: number
+    expiryDate?: number
+    proposalDate?: number
+    proposer?: string
     tag: string  
 }
 
@@ -57,7 +60,7 @@ export namespace Contract {
 
     export function makeProposal(title: string, uri: string, duration: number, tag: string): Promise<any> {  
         return new Promise((resolve, reject) => {
-            contractWriter.makeProposal(title, uri, duration, tag, (err: Error, data: any) => {
+            contractWriter.makeProposal(title, uri, duration * SEC_DAY, tag, (err: Error, data: any) => {
                 if (err) {
                     reject(err)
                 }
@@ -66,6 +69,19 @@ export namespace Contract {
                 }
             })
         })  
+    }
+
+    export function registerDelegatee(name: string): Promise<any> {  
+        return new Promise((resolve, reject) => {
+            contractWriter.registerDelegatee(name, (err: Error, data: any) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
+        })       
     }
 
     export function castVote(proposalId: number, value: boolean) {
@@ -78,10 +94,6 @@ export namespace Contract {
 
     export  function delegateTaggedVotes(tag: string, delegatee: string) {
         contractWriter.delegateTaggedVotes(tag, delegatee)
-    }
-
-    export function registerDelegatee(name: string) {
-        contractWriter.registerDelegatee(name)
     }
 
     export async function getDelegatees(): Promise<Delegatee[]> {

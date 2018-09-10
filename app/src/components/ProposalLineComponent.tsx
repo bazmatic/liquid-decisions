@@ -1,10 +1,18 @@
 import * as React from 'react';
 import {Proposal} from '../modules/LiquidDecisions'
+import { Button, Card, Typography, IconButton } from '@material-ui/core'
+import * as Icons from '@material-ui/icons'
+import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
 
 type Props = {
     proposal: Proposal,
     onSelect: Function | undefined
 }
+
+const MS_DAY: number = 60000 * 60 * 24
 
 export default class ProposalLineComponent extends React.Component <Props, { proposal: Proposal }> {
     key: string
@@ -25,17 +33,35 @@ export default class ProposalLineComponent extends React.Component <Props, { pro
         this.props.onSelect(this.state.proposal)
     }
 
+    private getSubtitle() {
+        //debugger
+        let now = new Date().getTime()
+        let expiresInDays = Math.round(((Number(this.state.proposal.expiryDate) * 1000) - now) / MS_DAY)
+        return `Due in ${expiresInDays} days`
+    }
+
     public render(): React.ReactNode {
 
         if (!this.state.proposal) {
             return <div className="proposalLine"></div>
+            
         } 
         else {
             return (
-                <div className="proposalLine" onClick={this.onSelect.bind(this)}>
-                    <h3>{this.state.proposal.id} {this.state.proposal.title}</h3>
-                    <a href={this.state.proposal.uri}>More info</a>
-                </div>
+                <Card>
+                    <CardHeader
+                        title={this.state.proposal.title}
+                        subheader={this.getSubtitle()}
+                    />
+                    <CardContent>
+                        <Typography>
+                            <a href={this.state.proposal.uri}>More info</a>
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button fullWidth={true} onClick={this.onSelect.bind(this)} variant="outlined" color="secondary"> <Icons.HowToVote /> Vote</Button>
+                    </CardActions>              
+               </Card>
             )
         }
     }

@@ -32,6 +32,8 @@ const Pages = {
 	DelegateePage: 'DelegateePage',
 }
 
+const HomePage = Pages.ProposalListPage
+
 //--------
 
 type AppState = {
@@ -71,6 +73,7 @@ export class App extends React.Component <{}, AppState> {
         this.setState({delegatees, proposals}) 
 	}
 	
+
 	private getTheme() {
 		return createMuiTheme({
 			palette: {
@@ -90,9 +93,6 @@ export class App extends React.Component <{}, AppState> {
 		});
 	}
 
-	homePage() {
-		return this.proposalListPage()
-	}
 
 	proposalPage() {
 		return (
@@ -112,7 +112,7 @@ export class App extends React.Component <{}, AppState> {
 	proposalNewPage() {
 		return (
 			<div className="page">
-				<ProposalNew onSave={this.choosePage.bind(this, Pages.HomePage)}></ProposalNew>
+				<ProposalNew onSave={this.choosePage.bind(this, HomePage)}></ProposalNew>
 			</div>
 		)
 	}
@@ -128,7 +128,7 @@ export class App extends React.Component <{}, AppState> {
 	delegateePage() {
 		return (
 			<div className="page">
-                <DelegateeEdit onSave={this.choosePage.bind(this, Pages.HomePage)}  />					
+                <DelegateeEdit onSave={this.choosePage.bind(this, HomePage)}  />					
 			</div>
 		)
 	}
