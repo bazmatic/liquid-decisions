@@ -1,5 +1,3 @@
-
-
 import { Delegatee, Voter, Proposal, Contract } from './LiquidDecisions'
 enum EventTypes { CastVoteEvent = 'CastVoteEvent', DelegateVoteEvent = 'DelegateVoteEvent' }
 

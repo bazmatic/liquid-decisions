@@ -116,7 +116,6 @@ export class App extends React.Component <{}, AppState> {
 
 
 	proposalPage() {
-		debugger
 		if (this.state.currentProposal !== undefined) {
 			return (
 				<div className="page">
@@ -137,6 +136,7 @@ export class App extends React.Component <{}, AppState> {
 			</div>
 		)
 	}
+
 	proposalNewPage() {
 		return (
 			<div className="page">
