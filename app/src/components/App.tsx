@@ -37,6 +37,7 @@ const HomePage = Pages.ProposalListPage
 //--------
 
 type AppState = {
+	selectedTab: string,
     page: string,
     proposals: Proposal[],
 	delegatees: Delegatee[],
@@ -51,19 +52,32 @@ export class App extends React.Component <{}, AppState> {
 		super(props, context);
 		this.state = {
 			//page: Pages.ProposalListPage,
-			page: Pages.ProposalNewPage,
+			selectedTab: HomePage,
+			page: HomePage,
             proposals: [],
-            delegatees: []
+            delegatees: [],
 		}
 		this.pageLookup = {}
-		this.pageLookup[Pages.ProposalListPage] = this.proposalListPage.bind(this)
-		this.pageLookup[Pages.ProposalNewPage] = this.proposalNewPage.bind(this)
-		this.pageLookup[Pages.DelegateeListPage] = this.delegateeListPage.bind(this)
-		this.pageLookup[Pages.DelegateePage] = this.delegateePage.bind(this)
-		this.pageLookup[Pages.ProposalPage] = this.proposalPage.bind(this)
+		this.pageLookup[Pages.ProposalListPage] = {
+			content: this.proposalListPage.bind(this),
+		}
+		this.pageLookup[Pages.DelegateeListPage] = {
+			content: this.delegateeListPage.bind(this),
+		} 
+		this.pageLookup[Pages.DelegateePage] = {
+			content: this.delegateePage.bind(this),
+		}
+		this.pageLookup[Pages.ProposalPage] = {
+			content: this.proposalPage.bind(this)
+		}
+		this.pageLookup[Pages.ProposalNewPage] = {
+			content: this.proposalNewPage.bind(this),
+			menu: Pages.ProposalPage,
+		}
 	}
 
 	async componentDidMount() {	
+		this.choosePage(HomePage)
 		this.syncWithContract()
     }
     
@@ -102,11 +116,18 @@ export class App extends React.Component <{}, AppState> {
 
 
 	proposalPage() {
-		return (
-			<div className="page">
-                <ProposalVote delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
-			</div>
-		)		
+		debugger
+		if (this.state.currentProposal !== undefined) {
+			return (
+				<div className="page">
+					<ProposalVote delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
+				</div>
+			)
+		}
+		else {
+			return this.proposalNewPage()
+		}
+		
 	}
 
 	proposalListPage() {
@@ -146,9 +167,8 @@ export class App extends React.Component <{}, AppState> {
     
 	choosePage(pageId) {
 		console.log("Choosing page", pageId)
-
 		if (Pages[pageId] && this.pageLookup[pageId]) {
-			this.setState({page: pageId})
+			this.setState({page: pageId, selectedTab: this.pageLookup[pageId].tab || pageId})
 		}
 		else {
 			console.warn("Unknown page", pageId)
@@ -165,7 +185,7 @@ export class App extends React.Component <{}, AppState> {
 
 		let content = ""
 		try {
-			content = this.pageLookup[this.state.page]()
+			content = this.pageLookup[this.state.page].content()
 		}
 		catch(e) {
 			console.error(`No page content found. Selected page: {$this.state.page}`)
@@ -178,17 +198,18 @@ export class App extends React.Component <{}, AppState> {
 				<MuiThemeProvider theme={theme}>
 					<AppBar position="static">
 						<Tabs
-							value={this.state.page}
+							value={this.state.selectedTab}
 							onChange={this.onChangeTab.bind(this)}
 							indicatorColor="secondary"
 							textColor="secondary"
 							scrollable
 							scrollButtons="auto"
 						>						
-							<Tab value={Pages.ProposalNewPage} label="New Proposal" />
+							<Tab value={Pages.ProposalPage} label="Proposal" />
 							<Tab value={Pages.DelegateeListPage} label="Delegatees" />
 							<Tab value={Pages.DelegateePage} label="Delegatee" />
 							<Tab value={Pages.ProposalListPage} label="Proposals" />
+
 						</Tabs>
 					</AppBar>
 				{content}

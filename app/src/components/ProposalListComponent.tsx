@@ -18,7 +18,6 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
     }
 
     componentWillReceiveProps(newProps) {
-        console.log('ProposalList.componentWillReceiveProps():', newProps);
         this.setState(newProps);
     }
 
@@ -29,11 +28,10 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
     render() {
         let proposals: any[];
         var number = 0;
-        console.log('ProposalList.render():', this.state);
-
+        
         proposals = this.state.proposals.map((proposalData: Proposal)=>{
             number ++;
-            return <Grid item><ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} /></Grid>
+            return <Grid item key={proposalData.id}><ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} /></Grid>
         });    
                      
 		return (

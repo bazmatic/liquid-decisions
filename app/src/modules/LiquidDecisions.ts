@@ -4,7 +4,7 @@ var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.js
 
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
 //const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
-const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"))
+const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
 const web3Writer = window['web3']
 
 const NETWORK_ID = "5777" //4
@@ -17,7 +17,7 @@ const contractWriter: any = web3Writer.eth.contract(abi).at(contractJson.network
 
 
 export type Voter = {
-    address: string
+    addr: string
     delegatee: Voter
     delegators: any
     voteValue: boolean  
@@ -37,7 +37,7 @@ export type Proposal = {
 
 export type Delegatee = {
     name: string
-    address: string
+    addr: string
     key?: number
 }
 

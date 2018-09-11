@@ -1,10 +1,12 @@
 import * as React from 'react'
 import  { Delegatee } from '../modules/LiquidDecisions'
+import { Typography, Grid, Paper, Card, CardHeader, CardContent, CardActions, Button } from '@material-ui/core';
 //im//port './ThreadViewer.css';
 
 type Props = {
     delegatees: Delegatee[],
-    onSelect?: Function
+    onSelect?: Function,
+    selector?: boolean,
 }
 
 export class DelegateeList extends React.Component <Props, { delegatees: Delegatee[] }> {
@@ -26,16 +28,39 @@ export class DelegateeList extends React.Component <Props, { delegatees: Delegat
     }
 
     render() {
+
         let delegatees: any[] = this.state.delegatees.map((delegateeData: Delegatee)=>{
-            return <li onClick={this.selectItem.bind(this, delegateeData)}>{delegateeData.name}</li>
-        });   
+            let cardActions = null
+            if (this.props.selector !== undefined) {
+                cardActions = (
+                    <CardActions>
+                        <Button fullWidth={true} onClick={this.selectItem.bind(this, delegateeData)} variant="outlined" color="secondary">Choose</Button>
+                    </CardActions>
+                )
+            }
+
+            return (
+               
+                <Grid item key={delegateeData.addr}>
+                    <Card>
+                        <CardHeader title={delegateeData.name} subheader={delegateeData.addr} />
+                        <CardContent>
+                            <Typography variant="body1">
+                                Here is some information about this Delegatee
+                            </Typography>
+                        </CardContent>
+                        {cardActions}
+                    </Card>
+                </Grid>
+            )
+        });  
+        console.log(delegatees) 
               
 		return (
-			<div className="DelegateeList">
-                {delegatees.length} delegatees
-                <ul>                   
+			<div className="delegateeList"> 
+                <Grid container>              
                     {delegatees}
-                </ul>
+                </Grid>
 			</div>
 		);
     }

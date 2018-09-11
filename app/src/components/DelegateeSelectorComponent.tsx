@@ -32,7 +32,7 @@ export class DelegateeSelectorComponent extends React.Component <Props, { delega
         delegatees = this.state.delegatees.map((delegateeData: Delegatee)=>{
             number ++;
             return <ul className="delegatee">
-                <li onClick={this.selectItem.bind(this, delegateeData)}>{delegateeData.name} {delegateeData.address}</li>       
+                <li onClick={this.selectItem.bind(this, delegateeData)}>{delegateeData.name} {delegateeData.addr}</li>       
             </ul>
         });   
                 

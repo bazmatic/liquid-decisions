@@ -14,13 +14,14 @@ type Props = {
 const MS_DAY: number = 60000 * 60 * 24
 
 export default class ProposalLineComponent extends React.Component <Props, { proposal: Proposal }> {
-    key: string
+
     data: Proposal
 
 	constructor(props) {
-		super(props);
+        super(props);
+    
 		this.state = {
-            proposal: props.proposal || {}
+            proposal: props.proposal || {},
         }
     }
 

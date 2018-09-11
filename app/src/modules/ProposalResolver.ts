@@ -4,7 +4,7 @@ import { Delegatee, Voter, Proposal, Contract } from './LiquidDecisions'
 enum EventTypes { CastVoteEvent = 'CastVoteEvent', DelegateVoteEvent = 'DelegateVoteEvent' }
 
 export type Voter = {
-    address: string
+    addr: string
     delegatee: Voter
     delegators: any
     voteValue: boolean  
@@ -20,7 +20,7 @@ export type Proposal = {
 
 export type Delegatee = {
     name: string
-    address: string
+    addr: string
 }
 
 
@@ -44,14 +44,14 @@ export class ProposalResolver {
     registerDelegation(voterAddress: string, delegateeAddress: string) {
        let voter = this.getVoter(voterAddress)
        voter.delegatee = this.getVoter(delegateeAddress)
-       voter.delegatee.delegators[voter.address] = voter
+       voter.delegatee.delegators[voter.addr] = voter
     }
 
     getVoter(addr: string): Voter {
         if (!this.voterIndex[addr]) {
             this.putVoter(
                 {
-                    address: addr,
+                    addr: addr,
                     voteValue: undefined,
                     delegatee: undefined,
                     delegators: {},
@@ -63,13 +63,13 @@ export class ProposalResolver {
     }
 
     putVoter(voter: Voter) {
-        this.voterIndex[voter.address] = voter
+        this.voterIndex[voter.addr] = voter
     }
 
     undelegate(voter: Voter) {
         if (voter.delegatee) {
             let oldDelegatee = voter.delegatee
-            delete oldDelegatee.delegators[voter.delegatee.address]
+            delete oldDelegatee.delegators[voter.delegatee.addr]
             delete voter.delegatee
         }
     }
