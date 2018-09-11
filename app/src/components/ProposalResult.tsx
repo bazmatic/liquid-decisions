@@ -1,22 +1,15 @@
 import * as React from 'react';
 import * as LiquidDecisions from '../modules/LiquidDecisions'
-import { ProposalResolver } from '../modules/ProposalResolver'
+import { ProposalResolver, ProposalTally } from '../modules/ProposalResolver'
 import { Paper } from '@material-ui/core';
 
 const MS_DAY: number = 60000 * 60 * 24
 
 type Props = {
-    proposal: LiquidDecisions.Proposal,
-    delegatees: LiquidDecisions.Delegatee[]
+    proposal: LiquidDecisions.Proposal
 }
 
-type Result = {
-    yes: number,
-    no: number,
-    lost: number
-}
-
-export class ProposalResult extends React.Component <Props, { proposal: LiquidDecisions.Proposal, result: any}> {
+export class ProposalResult extends React.Component <Props, { proposal: LiquidDecisions.Proposal, result: ProposalTally}> {
 
     private resolver: ProposalResolver
 
@@ -24,7 +17,11 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
 		super(props);
 		this.state = {
             proposal: props.proposal || {},
-            result: {}
+            result: {
+                yes: 0,
+                no: 0,
+                lost: 0,
+            }
         }
         this.resolver = new ProposalResolver(props.proposal.id)
     }
@@ -33,9 +30,13 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
         this.setState(newProps);
     } 
 
+    componentDidMount() {
+        this.getResult()
+    }
+
     public async getResult() {
-        let result = await this.resolver.calculateResult()
-        this.setState({result})
+        let result: ProposalTally = await this.resolver.calculateResult()
+        this.setState({result: result})
     }
 
     public render(): React.ReactNode {
@@ -47,7 +48,7 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
             return (
 
                 <Paper className="proposalResult">
-             
+                    {this.state.result.yes},{this.state.result.no},{this.state.result.lost}  
                 </Paper>
             )
         }

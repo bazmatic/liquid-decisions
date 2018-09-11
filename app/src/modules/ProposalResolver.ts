@@ -21,12 +21,18 @@ export type Delegatee = {
     addr: string
 }
 
+export type ProposalTally = {
+    yes: number
+    no: number
+    lost: number
+}
+
 
 export class ProposalResolver {
     abi: any
     voterIndex: any
     proposalId: number
-    result: any
+    result: ProposalTally
     constructor(proposalId: number) {
         this.proposalId = proposalId
         this.voterIndex = {}
@@ -101,46 +107,61 @@ export class ProposalResolver {
         return result
     }
     
-    async calculateResult() {
-        this.resetTally()
-        await this.registerEvents()
-        for (let voterAddress in this.voterIndex) {
+    async calculateResult(): Promise<ProposalTally> {
+        return new Promise<ProposalTally>(async (resolve: any, reject: any) => {
+            try {
+                this.resetTally()
+                await this.registerEvents()
+                for (let voterAddress in this.voterIndex) {
 
-            let voter = this.getVoter(voterAddress)
-            //If they voted, add their vote and those of their delegators
-            if (voter.voteValue !== undefined) {
-                this.tally(voter.voteValue, this._reapDelegators(Object.values(voter.delegators))) 
+                    let voter = this.getVoter(voterAddress)
+                    //If they voted, add their vote and those of their delegators
+                    if (voter.voteValue !== undefined) {
+                        this.tally(voter.voteValue, this._reapDelegators(Object.values(voter.delegators))) 
+                    }
+                    
+                    //If they did not vote, did not delegate, and had delegators... very bad behaviour!
+                    else if (voter.delegatee == undefined && voter.delegators.length > 0) {
+                        let lostVotes: number = this._reapDelegators(Object.values(voter.delegators))
+                        console.warn(`${voter} did not vote and lost ${lostVotes} votes`)
+                        this.tally(voter.voteValue, lostVotes)
+                    }
+                    //If they did not vote, but delegated,
+                    else if (voter.delegatee) {
+                        //nothing to do
+                    }
+                    else {
+                        //Somehow they didn't vote or delegate!
+                        console.warn(`${voter} did not vote`)
+                    }
+                }
+                resolve(this.result)
             }
-            
-            //If they did not vote, did not delegate, and had delegators... very bad behaviour!
-            else if (voter.delegatee == undefined && voter.delegators.length > 0) {
-                let lostVotes: number = this._reapDelegators(Object.values(voter.delegators))
-                console.warn(`${voter} did not vote and lost ${lostVotes} votes`)
-                this.tally(voter.voteValue, lostVotes)
-            }
-            //If they did not vote, but delegated,
-            else if (voter.delegatee) {
-                //nothing to do
-            }
-            else {
-                //Somehow they didn't vote or delegate!
-                console.warn(`${voter} did not vote`)
-            }
-
-        }
-        console.log(this.result)
-    }
-    async registerEvents() {
-        let events = await Contract.getEvents(this.proposalId)
-        events.forEach((item)=>{
-            let eventDetails: any = item.returnValues
-            if (item.event === EventTypes.CastVoteEvent) {
-                this.registerVote(eventDetails.voter, eventDetails.value)
-            }
-            else if (item.event === EventTypes.DelegateVoteEvent) {
-                this.registerDelegation(eventDetails.voter, eventDetails.delegatee)
+            catch (err) {
+                reject(err)
             }
         })
+    }
+    async registerEvents(): Promise<void> {
+        return new Promise<void>(async (reject, resolve) => {
+            try {
+                let events = await Contract.getEvents(this.proposalId)
+                events.forEach((item)=>{
+                    let eventDetails: any = item.returnValues
+                    if (item.event === EventTypes.CastVoteEvent) {
+                        this.registerVote(eventDetails.voter, eventDetails.value)
+                    }
+                    else if (item.event === EventTypes.DelegateVoteEvent) {
+                        this.registerDelegation(eventDetails.voter, eventDetails.delegatee)
+                    }
+                }) 
+                resolve() 
+            }
+            catch (err) {
+                reject(err)
+            }
+        })
+
     }
     
 }

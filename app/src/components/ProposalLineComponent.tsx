@@ -33,11 +33,12 @@ export default class ProposalLineComponent extends React.Component <Props, { pro
         this.props.onSelect(this.state.proposal)
     }
 
+    //TODO: Proposal components should inherit
     private getSubtitle() {
         //debugger
         let now = new Date().getTime()
         let expiresInDays = Math.round(((Number(this.state.proposal.expiryDate) * 1000) - now) / MS_DAY)
-        return `Due in ${expiresInDays} days`
+        return `Expires in ${expiresInDays} days`
     }
 
     public render(): React.ReactNode {

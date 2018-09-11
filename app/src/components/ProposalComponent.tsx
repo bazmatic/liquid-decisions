@@ -24,7 +24,7 @@ export default class ProposalComponent extends React.Component <Props, { proposa
     public render(): React.ReactNode {
 
         if (!this.state.proposal) {
-            return <div className="stitch"></div>
+            return <div></div>
         } 
         else {
             return (
