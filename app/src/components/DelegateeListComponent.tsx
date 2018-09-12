@@ -58,7 +58,7 @@ export class DelegateeList extends React.Component <Props, { delegatees: Delegat
               
 		return (
 			<div className="delegateeList"> 
-                <Grid container>              
+                <Grid container direction="column">              
                     {delegatees}
                 </Grid>
 			</div>

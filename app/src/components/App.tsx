@@ -4,21 +4,18 @@ import { DelegateeEdit } from './DelegateeEditComponent'
 import { DelegateeList } from './DelegateeListComponent'
 import { ProposalList } from './ProposalListComponent'
 import { ProposalNew } from './ProposalNewComponent'
-import { ProposalVote } from './ProposalVoteComponent'
-import { ProposalResolver } from '../modules/ProposalResolver'
+import { ProposalComponent } from './ProposalComponent'
 import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
+
 import AppBar from '@material-ui/core/AppBar'
 //import Toolbar from '@material-ui/core/Toolbar'
 //import Typography from '@material-ui/core/Typography'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-//import { threadAddress } from './contracts/thread.js';
 var ContractBuild = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 const threadAbi = ContractBuild.abi;
-
 const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
-//const CONTRACT_ADDRESS = '0xfe6197115746cbb352cfffab1b4a646b6c3ef0d1';// '0x7ad8652e160c13bd849a7cf671106150884be92f';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
@@ -110,6 +107,12 @@ export class App extends React.Component <{}, AppState> {
 						padding: "1em",
 					}
 				},
+				MuiButton: {
+					root: {
+						margin: "1em",
+						padding: "1em"
+					}
+				}
 			}
 		});
 	}
@@ -119,7 +122,7 @@ export class App extends React.Component <{}, AppState> {
 		if (this.state.currentProposal !== undefined) {
 			return (
 				<div className="page">
-					<ProposalVote delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
+					<ProposalComponent showVoteUi={true} showSelectUi={false} delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
 				</div>
 			)
 		}

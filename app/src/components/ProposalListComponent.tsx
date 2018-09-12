@@ -1,5 +1,5 @@
 import * as React from 'react'
-import ProposalLineComponent from './ProposalLineComponent'
+import { ProposalComponent } from './ProposalComponent'
 import { Proposal, Delegatee } from '../modules/LiquidDecisions'
 import { Paper, Typography, Grid } from '@material-ui/core';
 //im//port './ThreadViewer.css';
@@ -31,7 +31,7 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
         
         proposals = this.state.proposals.map((proposalData: Proposal)=>{
             number ++;
-            return <Grid item key={proposalData.id}><ProposalLineComponent onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} /></Grid>
+            return <Grid item key={proposalData.id}><ProposalComponent showSelectUi={true} showVoteUi={false} onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} delegatees={this.state.delegatees}/></Grid>
         });    
                      
 		return (
