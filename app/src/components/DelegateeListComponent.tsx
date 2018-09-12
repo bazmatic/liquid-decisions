@@ -34,7 +34,7 @@ export class DelegateeList extends React.Component <Props, { delegatees: Delegat
             if (this.props.selector !== undefined) {
                 cardActions = (
                     <CardActions>
-                        <Button fullWidth={true} onClick={this.selectItem.bind(this, delegateeData)} variant="outlined" color="secondary">Choose</Button>
+                        <Button onClick={this.selectItem.bind(this, delegateeData)} color="secondary">Choose</Button>
                     </CardActions>
                 )
             }

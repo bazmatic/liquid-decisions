@@ -19,6 +19,7 @@ const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
+import { Typography } from '@material-ui/core';
 
 const Pages = {
 	HomePage: 'HomePage',
@@ -109,8 +110,7 @@ export class App extends React.Component <{}, AppState> {
 				},
 				MuiButton: {
 					root: {
-						margin: "1em",
-						padding: "1em"
+						marginRight: "1em"
 					}
 				}
 			}
@@ -135,6 +135,7 @@ export class App extends React.Component <{}, AppState> {
 	proposalListPage() {
 		return (
 			<div className="page">
+				<Typography variant="headline">Current Proposals</Typography>
                 <ProposalList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} proposals={this.state.proposals} />					
 			</div>
 		)
@@ -151,6 +152,7 @@ export class App extends React.Component <{}, AppState> {
 	delegateeListPage() {
 		return (
 			<div className="page">
+				<Typography variant="headline">Registered Delegates</Typography>
      			<DelegateeList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} />           				
 			</div>
 		)

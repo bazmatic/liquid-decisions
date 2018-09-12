@@ -31,14 +31,16 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
         
         proposals = this.state.proposals.map((proposalData: Proposal)=>{
             number ++;
-            return <Grid item key={proposalData.id}><ProposalComponent showSelectUi={true} showVoteUi={false} onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} delegatees={this.state.delegatees}/></Grid>
+            return (
+                <Grid item key={proposalData.id}>
+                    <ProposalComponent showSelectUi={true} showVoteUi={false} onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} delegatees={this.state.delegatees}/>
+                </Grid>
+
+            )
         });    
                      
 		return (
 			<div>
-                <Typography variant="headline">
-                    {proposals.length} proposals
-                </Typography>
                 <Grid container direction="column" spacing={16}>
                     {proposals}
                 </Grid>

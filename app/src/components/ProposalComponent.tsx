@@ -181,7 +181,7 @@ export class ProposalComponent extends React.Component <Props, State> {
                             You are about to delegate your vote on this proposal to {this.state.selectedDelegatee.name}
                         </Typography>
                         <Button onClick={this.delegateVote.bind(this, false)} variant="outlined" color="secondary">Delegate</Button>
-                        <Button onClick={this.cancelDelegation.bind(this, false)} variant="outlined" color="secondary">Cancel</Button>
+                        <Button onClick={this.cancelDelegation.bind(this, false)} color="secondary">Cancel</Button>
                     </div>
 
                 )
@@ -190,7 +190,7 @@ export class ProposalComponent extends React.Component <Props, State> {
         else if (this.props.showSelectUi) {
             return (
                 <Grid container direction="row">  
-                    <Button fullWidth={true} onClick={this.onSelect.bind(this)} variant="outlined" color="secondary"> <HowToVote /> Vote</Button>
+                    <Button onClick={this.onSelect.bind(this)} color="secondary"> <HowToVote /> Vote</Button>
                 </Grid>
             )  
         }
