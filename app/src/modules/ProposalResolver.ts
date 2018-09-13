@@ -48,6 +48,7 @@ export class ProposalResolver {
 
     registerDelegation(voterAddress: string, delegateeAddress: string) {
        let voter = this.getVoter(voterAddress)
+       delete voter.voteValue
        voter.delegatee = this.getVoter(delegateeAddress)
        voter.delegatee.delegators[voter.addr] = voter
     }
@@ -74,7 +75,7 @@ export class ProposalResolver {
     undelegate(voter: Voter) {
         if (voter.delegatee) {
             let oldDelegatee = voter.delegatee
-            delete oldDelegatee.delegators[voter.delegatee.addr]
+            delete oldDelegatee.delegators[voter.addr]
             delete voter.delegatee
         }
     }
@@ -86,10 +87,10 @@ export class ProposalResolver {
         }
     }
     tally(voteValue: any, votes: number) {
-        if (voteValue == true) {
+        if (voteValue === true) {
             this.result.yes += votes
         }
-        else if (voteValue == false || voteValue == null) {
+        else if (voteValue === false || voteValue === null) {
             this.result.no += votes
         }
         else {
@@ -101,7 +102,7 @@ export class ProposalResolver {
     _reapDelegators(delegators: Array<Voter>): number{
         let result = delegators.length + 1
         delegators.forEach((delegator: Voter)=>{
-            if (delegator.delegators.length) {
+            if (Object.values(delegator.delegators).length) {
                 result += this._reapDelegators(Object.values(delegator.delegators))
             }
         })
@@ -125,7 +126,7 @@ export class ProposalResolver {
                     }
                     
                     //If they did not vote, did not delegate, and had delegators... very bad behaviour!
-                    else if (voter.delegatee == undefined && voter.delegators.length > 0) {
+                    else if (voter.delegatee == undefined && Object.values(voter.delegators).length > 0) {
                         let lostVotes: number = this._reapDelegators(Object.values(voter.delegators))
                         console.warn(`${voterAddress} did not vote and lost ${lostVotes} votes`)
                         this.tally(voter.voteValue, lostVotes)
