@@ -2,7 +2,6 @@ import * as React from 'react'
 import { ProposalComponent } from './ProposalComponent'
 import { Proposal, Delegatee } from '../modules/LiquidDecisions'
 import { Paper, Typography, Grid } from '@material-ui/core';
-//im//port './ThreadViewer.css';
 
 type Props = {
     proposals: Proposal[],

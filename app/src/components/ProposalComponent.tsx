@@ -33,7 +33,7 @@ export class ProposalComponent extends React.Component <Props, State> {
             proposal: props.proposal || {},
             delegatees: props.delegatees || [],
             selectedDelegatee: undefined,
-            showResults: false,
+            showResults: true,
             showDelegationUi: false,
         }
         //this.proposalResultComponent = new ProposalResult({proposal: props.proposal})
@@ -157,7 +157,7 @@ export class ProposalComponent extends React.Component <Props, State> {
             if (this.state.selectedDelegatee === undefined) {
                 return (
                     <div className="voteUi">         
-                        <Button onClick={this.vote.bind(this, false)} variant="outlined" color="secondary">Vote YES</Button>
+                        <Button onClick={this.vote.bind(this, true)} variant="outlined" color="secondary">Vote YES</Button>
                         <Button onClick={this.vote.bind(this, false)} variant="outlined" color="secondary">Vote NO</Button>
                         <IconButton
                             onClick={this.toggleDelegationUi.bind(this)}

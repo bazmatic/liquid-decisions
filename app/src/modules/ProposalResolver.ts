@@ -1,5 +1,6 @@
 import { Delegatee, Voter, Proposal, Contract } from './LiquidDecisions'
-enum EventTypes { CastVoteEvent = 'CastVoteEvent', DelegateVoteEvent = 'DelegateVoteEvent' }
+
+export enum EventTypes { CastVoteEvent = 'CastVoteEvent', DelegateVoteEvent = 'DelegateVoteEvent' }
 
 export type Voter = {
     addr: string
@@ -107,13 +108,16 @@ export class ProposalResolver {
         return result
     }
     
-    async calculateResult(): Promise<ProposalTally> {
+    async calculateResult(events?: any[]): Promise<ProposalTally> {
         return new Promise<ProposalTally>(async (resolve: any, reject: any) => {
             try {
                 this.resetTally()
-                await this.registerEvents()
-                for (let voterAddress in this.voterIndex) {
+                if (events === undefined) {
+                    await Contract.getEvents(this.proposalId)
+                }
+                await this.registerEvents(events)
 
+                for (let voterAddress in this.voterIndex) {
                     let voter = this.getVoter(voterAddress)
                     //If they voted, add their vote and those of their delegators
                     if (voter.voteValue !== undefined) {
@@ -123,7 +127,7 @@ export class ProposalResolver {
                     //If they did not vote, did not delegate, and had delegators... very bad behaviour!
                     else if (voter.delegatee == undefined && voter.delegators.length > 0) {
                         let lostVotes: number = this._reapDelegators(Object.values(voter.delegators))
-                        console.warn(`${voter} did not vote and lost ${lostVotes} votes`)
+                        console.warn(`${voterAddress} did not vote and lost ${lostVotes} votes`)
                         this.tally(voter.voteValue, lostVotes)
                     }
                     //If they did not vote, but delegated,
@@ -132,7 +136,7 @@ export class ProposalResolver {
                     }
                     else {
                         //Somehow they didn't vote or delegate!
-                        console.warn(`${voter} did not vote`)
+                        console.warn(`${voterAddress} did not vote`)
                     }
                 }
                 resolve(this.result)
@@ -142,10 +146,9 @@ export class ProposalResolver {
             }
         })
     }
-    async registerEvents(): Promise<void> {
-        return new Promise<void>(async (reject, resolve) => {
+    async registerEvents(events: any): Promise<void> {
+        return new Promise<void>(async (resolve: any, reject: any) => {
             try {
-                let events = await Contract.getEvents(this.proposalId)
                 events.forEach((item)=>{
                     let eventDetails: any = item.returnValues
                     if (item.event === EventTypes.CastVoteEvent) {

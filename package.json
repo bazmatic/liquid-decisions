@@ -4,11 +4,25 @@
   "description": "Simple delegated voting via Ethereum",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "webpack --config=./app/webpack.config.js --context=./app --mode=development",
     "start-dev": "webpack-dev-server --config=./app/webpack.config.js  --context=./app --mode=development",
     "compile": "truffle compile",
     "deploy": "truffle --reset deploy"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   },
   "author": "Barry Earsman",
   "license": "ISC",
@@ -22,16 +36,20 @@
     "common-js": "^0.3.8",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "web3": "^1.0.0-beta.35"
+    "web3": "^1.0.0-beta.36"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.2",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^1.0.0",
+    "ethers": "^3.0.27",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^23.6.0",
     "style-loader": "^0.23.0",
     "truffle-hdwallet-provider": "0.0.6",
+    "ts-jest": "^23.1.4",
     "ts-loader": "^4.5.0",
     "typescript": "^3.0.3",
     "webpack": "^4.17.1",

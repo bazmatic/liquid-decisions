@@ -1,20 +1,27 @@
-import Web3 from 'web3';
+const Web3 = require('web3')
 import { resolve } from 'url';
 var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
 //const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
 const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
-const web3Writer = window['web3']
 
-const NETWORK_ID = "5777" //4
+var web3Writer: any
+if (window && window['web3']) {
+    web3Writer = window?window['web3']:web3Reader
+} 
+else {
+    web3Writer = web3Reader
+}
+
+const NETWORK_ID = "5777" //
 var SEC_DAY = 60 * 60 * 24
-var STARTING_BLOCK = 1891409;
+var STARTING_BLOCK = 1;
 const abi = contractJson.abi
 const contractReader: any = new web3Reader.eth.Contract(abi, contractJson.networks[NETWORK_ID].address)
-const contractWriter: any = web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
-//const contractWriter = uport.contract(abi).at(abi.deployedAddress);
+const contractWriter: any = (web3Reader == web3Writer)?contractReader:web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
 
+//const contractWriter = uport.contract(abi).at(abi.deployedAddress);
 
 export type Voter = {
     addr: string
@@ -41,12 +48,10 @@ export type Delegatee = {
     key?: number
 }
 
-
-
 export namespace Contract {
     export async function getEvents(proposalId: number)  {
 
-        let events: Array<any> = (await this.contract.getPastEvents(
+        let events: Array<any> = (await contractReader.getPastEvents(
             'allEvents',
             {
                 //filter: {proposalId: proposalId.toString()}, 
@@ -59,7 +64,7 @@ export namespace Contract {
     }
 
     export function makeProposal(title: string, uri: string, duration: number, tag: string): Promise<any> {  
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             contractWriter.makeProposal(title, uri, duration * SEC_DAY, tag, (err: Error, data: any) => {
                 if (err) {
                     reject(err)
@@ -72,7 +77,7 @@ export namespace Contract {
     }
 
     export function registerDelegatee(name: string): Promise<any> {  
-        return new Promise((resolve, reject) => {
+        return new Promise<any>((resolve, reject) => {
             contractWriter.registerDelegatee(name, (err: Error, data: any) => {
                 if (err) {
                     reject(err)
@@ -81,40 +86,66 @@ export namespace Contract {
                     resolve(data)
                 }
             })
-        })       
+        })
     }
 
     export function castVote(proposalId: number, value: boolean) {
-        contractWriter.castVote(proposalId, value)
+        return new Promise<any>((resolve, reject) => {
+            contractWriter.castVote(proposalId, value, (err: Error, data: any) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
+        })
     }
 
     export function delegateVote(proposalId: number, delegatee: string) {
-        contractWriter.delegateVote(proposalId, delegatee)
+        return new Promise<any>((resolve, reject) => {
+            contractWriter.delegateVote(proposalId, delegatee, (err: Error, data: any) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
+        })
     }
 
-    export  function delegateTaggedVotes(tag: string, delegatee: string) {
-        contractWriter.delegateTaggedVotes(tag, delegatee)
+    export function delegateTaggedVotes(tag: string, delegatee: string) {
+        return new Promise<any>((resolve, reject) => {
+            contractWriter.delegateTaggedVotes(tag, delegatee, (err: Error, data: any) => {
+                if (err) {
+                    reject(err)
+                }
+                else {
+                    resolve(data)
+                }
+            })
+        })
     }
 
     export async function getDelegatees(): Promise<Delegatee[]> {
-
-            return new Promise<Delegatee[]>(async (resolve, reject) => {
-                try {
-                    let count = parseInt(await contractReader.methods.delegateeCount().call(), 10);
-                    let delegatees: Delegatee[] = []
-            
-                    for (let i=0; i< count; i++) {
-                        let delegatee: Delegatee = await contractReader.methods.delegatees(i).call()
-                        delegatee.key = i;
-                        delegatees.push(delegatee);
-                    }
-                    resolve(delegatees)
+        return new Promise<Delegatee[]>(async (resolve, reject) => {
+            try {
+                let count = parseInt(await contractReader.methods.delegateeCount().call(), 10);
+                let delegatees: Delegatee[] = []
+        
+                for (let i=0; i< count; i++) {
+                    let delegatee: Delegatee = await contractReader.methods.delegatees(i).call()
+                    delegatee.key = i;
+                    delegatees.push(delegatee);
                 }
-                catch (e) {
-                    console.error(e)
-                    resolve([])
-                }
-            })
+                resolve(delegatees)
+            }
+            catch (e) {
+                console.error(e)
+                resolve([])
+            }
+        })
     }
 
     export async function getProposals(): Promise<Proposal[]> {

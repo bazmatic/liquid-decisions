@@ -39,8 +39,7 @@ export class DelegateeList extends React.Component <Props, { delegatees: Delegat
                 )
             }
 
-            return (
-               
+            return (               
                 <Grid item key={delegateeData.addr}>
                     <Card>
                         <CardHeader title={delegateeData.name} subheader={delegateeData.addr} />
