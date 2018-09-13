@@ -100,7 +100,7 @@ export class ProposalResolver {
 
     //TODO: Eliminate delegation loops
     _reapDelegators(delegators: Array<Voter>): number{
-        let result = delegators.length + 1
+        let result = delegators.length
         delegators.forEach((delegator: Voter)=>{
             if (Object.values(delegator.delegators).length) {
                 result += this._reapDelegators(Object.values(delegator.delegators))
@@ -122,7 +122,7 @@ export class ProposalResolver {
                     let voter = this.getVoter(voterAddress)
                     //If they voted, add their vote and those of their delegators
                     if (voter.voteValue !== undefined) {
-                        this.tally(voter.voteValue, this._reapDelegators(Object.values(voter.delegators))) 
+                        this.tally(voter.voteValue, this._reapDelegators(Object.values(voter.delegators))+1) 
                     }
                     
                     //If they did not vote, did not delegate, and had delegators... very bad behaviour!

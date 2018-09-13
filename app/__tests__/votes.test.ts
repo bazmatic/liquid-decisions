@@ -50,7 +50,7 @@ type TestCase = {
 const PROPOSAL_1 = 1
 
 const testCases: TestCase[] = [
-  
+
     {
         info: 'Vote yes',
         sequence: [
@@ -92,7 +92,7 @@ const testCases: TestCase[] = [
         }       
     },
     {
-        info: 'Delegate, then vote yes, then delegatee votes no',
+        info: 'Delegate, then undelegate by vote yes, then delegatee votes no',
         sequence: [
             {
                 actor: Actors.Andrew,
@@ -116,9 +116,23 @@ const testCases: TestCase[] = [
             lost: 0
         }       
     },
-    
     {
         info: 'Delegate, then delegatee fails to vote',
+        sequence: [
+            {
+                actor: Actors.Andrew,
+                event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Edgar
+            },
+        ],
+        expectedOutcome: {
+            yes: 0,
+            no: 0,
+            lost: 1
+        }       
+    },
+    {
+        info: 'Delegate, then delegatee delegates, then ultimate delegate vote yes',
         sequence: [
             {
                 actor: Actors.Andrew,
@@ -128,16 +142,102 @@ const testCases: TestCase[] = [
             {
                 actor: Actors.Andrew,
                 event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Darlene
+            },
+            {
+                actor: Actors.Darlene,
+                event: EventTypes.DelegateVoteEvent,
                 eventValue: Actors.Edgar
+            },
+            {
+                actor: Actors.Edgar,
+                event: EventTypes.CastVoteEvent,
+                eventValue: true
             }
         ],
         expectedOutcome: {
-            yes: 0,
+            yes: 3,
             no: 0,
-            lost: 2
+            lost: 0
         }       
     },
-    
+    {
+        info: 'Twofold delegation yes, two individuals vote no',
+        sequence: [
+
+            {
+                actor: Actors.Andrew,
+                event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Darlene
+            },
+            {
+                actor: Actors.Darlene,
+                event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Edgar
+            },
+            {
+                actor: Actors.Edgar,
+                event: EventTypes.CastVoteEvent,
+                eventValue: true
+            },
+            {
+                actor: Actors.Betty,
+                event: EventTypes.CastVoteEvent,
+                eventValue: false
+            },
+            {
+                actor: Actors.Cedric,
+                event: EventTypes.CastVoteEvent,
+                eventValue: false
+            },
+        ],
+        expectedOutcome: {
+            yes: 3,
+            no: 2,
+            lost: 0
+        }       
+    },
+    {
+        info: 'Twofold delegation yes, two individuals vote no, first delegate undelegates by voting no',
+        sequence: [
+
+            {
+                actor: Actors.Andrew,
+                event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Darlene
+            },
+            {
+                actor: Actors.Darlene,
+                event: EventTypes.DelegateVoteEvent,
+                eventValue: Actors.Edgar
+            },
+            {
+                actor: Actors.Edgar,
+                event: EventTypes.CastVoteEvent,
+                eventValue: true
+            },
+            {
+                actor: Actors.Betty,
+                event: EventTypes.CastVoteEvent,
+                eventValue: false
+            },
+            {
+                actor: Actors.Cedric,
+                event: EventTypes.CastVoteEvent,
+                eventValue: false
+            },
+            {
+                actor: Actors.Darlene,
+                event: EventTypes.CastVoteEvent,
+                eventValue: false
+            },
+        ],
+        expectedOutcome: {
+            yes: 1,
+            no: 4,
+            lost: 0
+        }       
+    },    
 ]
 
 function makeJestTestData(): any[][] {
