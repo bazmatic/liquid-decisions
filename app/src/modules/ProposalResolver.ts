@@ -40,20 +40,49 @@ export class ProposalResolver {
         this.resetTally()
     }
 
-    registerVote(voterAddress: string, voteValue: boolean) {
+    private registerVote(voterAddress: string, voteValue: boolean) {
         let voter = this.getVoter(voterAddress)
         voter.voteValue = voteValue?true:false
         this.undelegate(voter)
     }
 
-    registerDelegation(voterAddress: string, delegateeAddress: string) {
+    private registerDelegation(voterAddress: string, delegateeAddress: string) {
+        
        let voter = this.getVoter(voterAddress)
-       delete voter.voteValue
-       voter.delegatee = this.getVoter(delegateeAddress)
-       voter.delegatee.delegators[voter.addr] = voter
+       let delegatee = this.getVoter(delegateeAddress)
+
+        if (this.hasCircularDelegation(voter, delegatee)) {           
+            console.warn("Found circular delegation. Not delegating.")
+        }
+        else {
+            delete voter.voteValue
+            voter.delegatee = this.getVoter(delegateeAddress)
+            voter.delegatee.delegators[voter.addr] = voter
+        }
     }
 
-    getVoter(addr: string): Voter {
+    private hasCircularDelegation(voter: Voter, delegatee: Voter): boolean {
+        //Look down the chain of delegation for any reference to anything already on the delegation chain
+        let chainContentIndex: any = {}
+        let currentVoter: Voter = delegatee
+        let voterIsInDelegationChain: boolean = false
+
+        chainContentIndex[voter.addr] = true
+
+        while(currentVoter.delegatee !== undefined && voterIsInDelegationChain == false) {
+            if (chainContentIndex[currentVoter.delegatee.addr] !== undefined) {
+                voterIsInDelegationChain = true
+            }
+            else {
+                chainContentIndex[currentVoter.addr] = true
+                currentVoter = currentVoter.delegatee
+            }
+        }
+
+        return voterIsInDelegationChain
+    }
+
+    private getVoter(addr: string): Voter {
         if (!this.voterIndex[addr]) {
             this.putVoter(
                 {
@@ -68,11 +97,11 @@ export class ProposalResolver {
         return this.voterIndex[addr]              
     }
 
-    putVoter(voter: Voter) {
+    private putVoter(voter: Voter) {
         this.voterIndex[voter.addr] = voter
     }
 
-    undelegate(voter: Voter) {
+    private undelegate(voter: Voter) {
         if (voter.delegatee) {
             let oldDelegatee = voter.delegatee
             delete oldDelegatee.delegators[voter.addr]
@@ -99,7 +128,7 @@ export class ProposalResolver {
     }
 
     //TODO: Eliminate delegation loops
-    _reapDelegators(delegators: Array<Voter>): number{
+    private _reapDelegators(delegators: Array<Voter>): number{
         let result = delegators.length
         delegators.forEach((delegator: Voter)=>{
             if (Object.values(delegator.delegators).length) {
@@ -109,7 +138,7 @@ export class ProposalResolver {
         return result
     }
     
-    async calculateResult(events?: any[]): Promise<ProposalTally> {
+    public async calculateResult(events?: any[]): Promise<ProposalTally> {
         return new Promise<ProposalTally>(async (resolve: any, reject: any) => {
             try {
                 this.resetTally()
@@ -147,7 +176,7 @@ export class ProposalResolver {
             }
         })
     }
-    async registerEvents(events: any): Promise<void> {
+    private async registerEvents(events: any): Promise<void> {
         return new Promise<void>(async (resolve: any, reject: any) => {
             try {
                 events.forEach((item)=>{
