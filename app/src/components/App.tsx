@@ -19,7 +19,7 @@ const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
-import { Typography } from '@material-ui/core';
+import { Typography, Paper } from '@material-ui/core';
 
 const Pages = {
 	HomePage: 'HomePage',
@@ -91,14 +91,14 @@ export class App extends React.Component <{}, AppState> {
 			palette: {
 			  secondary: {
 				light: '#CCC',
-				main: '#000',
-				dark: themeColors.blue["50"],
+				main: themeColors.blue["800"],
+				dark: themeColors.blue["800"],
 				contrastText: 'red',
 			  },
 			  primary: {
 				light: '#ff7961',
 				main: '#fff',
-				dark: '#555',
+				dark: themeColors.blue["50"],
 				contrastText: '#CCC',
 			  },
 			},
@@ -122,6 +122,9 @@ export class App extends React.Component <{}, AppState> {
 		if (this.state.currentProposal !== undefined) {
 			return (
 				<div className="page">
+					<Paper>
+						<Typography variant="headline">Proposal</Typography>
+					</Paper>
 					<ProposalComponent showVoteUi={true} showSelectUi={false} delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
 				</div>
 			)
@@ -135,7 +138,9 @@ export class App extends React.Component <{}, AppState> {
 	proposalListPage() {
 		return (
 			<div className="page">
-				<Typography variant="headline">Current Proposals</Typography>
+				<Paper>
+					<Typography variant="headline">Current Proposals</Typography>
+				</Paper>
                 <ProposalList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} proposals={this.state.proposals} />					
 			</div>
 		)
@@ -144,7 +149,9 @@ export class App extends React.Component <{}, AppState> {
 	proposalNewPage() {
 		return (
 			<div className="page">
-				<ProposalNew onSave={this.choosePage.bind(this, HomePage)}></ProposalNew>
+				<Paper>
+					<ProposalNew onSave={this.choosePage.bind(this, HomePage)}></ProposalNew>
+				</Paper>
 			</div>
 		)
 	}
@@ -152,7 +159,9 @@ export class App extends React.Component <{}, AppState> {
 	delegateeListPage() {
 		return (
 			<div className="page">
-				<Typography variant="headline">Registered Delegates</Typography>
+				<Paper>
+					<Typography variant="headline">Registered Delegates</Typography>
+				</Paper>
      			<DelegateeList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} />           				
 			</div>
 		)
@@ -161,6 +170,9 @@ export class App extends React.Component <{}, AppState> {
 	delegateePage() {
 		return (
 			<div className="page">
+				<Paper>
+					<Typography variant="headline">Register as a Delegate</Typography>
+				</Paper>
                 <DelegateeEdit onSave={this.choosePage.bind(this, HomePage)}  />					
 			</div>
 		)
@@ -209,11 +221,12 @@ export class App extends React.Component <{}, AppState> {
 							textColor="secondary"
 							scrollable
 							scrollButtons="auto"
-						>						
-							<Tab value={Pages.ProposalPage} label="Proposal" />
-							<Tab value={Pages.DelegateeListPage} label="Delegatees" />
-							<Tab value={Pages.DelegateePage} label="Delegatee" />
-							<Tab value={Pages.ProposalListPage} label="Proposals" />
+						>
+							<Tab value={Pages.ProposalListPage} label="Proposals" />						
+							<Tab value={Pages.ProposalPage} label="Propose" />
+							<Tab value={Pages.DelegateeListPage} label="Delegates" />
+							<Tab value={Pages.DelegateePage} label="Register" />
+							
 
 						</Tabs>
 					</AppBar>

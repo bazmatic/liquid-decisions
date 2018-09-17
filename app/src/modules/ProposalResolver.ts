@@ -28,7 +28,6 @@ export type ProposalTally = {
     lost: number
 }
 
-
 export class ProposalResolver {
     abi: any
     voterIndex: any
@@ -108,14 +107,15 @@ export class ProposalResolver {
             delete voter.delegatee
         }
     }
-    resetTally() {
+
+    private resetTally() {
         this.result = {
             yes: 0,
             no: 0,
             lost: 0
         }
     }
-    tally(voteValue: any, votes: number) {
+    private tally(voteValue: any, votes: number) {
         if (voteValue === true) {
             this.result.yes += votes
         }
@@ -143,7 +143,7 @@ export class ProposalResolver {
             try {
                 this.resetTally()
                 if (events === undefined) {
-                    await Contract.getEvents(this.proposalId)
+                    events = await Contract.getEvents(this.proposalId)
                 }
                 await this.registerEvents(events)
 

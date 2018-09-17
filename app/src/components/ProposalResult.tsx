@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as LiquidDecisions from '../modules/LiquidDecisions'
 import { ProposalResolver, ProposalTally } from '../modules/ProposalResolver'
-import { Paper } from '@material-ui/core';
+import { Paper, Grid, Typography } from '@material-ui/core';
 
 const MS_DAY: number = 60000 * 60 * 24
 
@@ -39,16 +39,37 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
         this.setState({result: result})
     }
 
+    private resultOptions(): String[] {
+        return Object.keys(this.state.result) 
+    }
+
     public render(): React.ReactNode {
 
         if (!this.state.proposal) {
             return <div></div>
         } 
         else {
+            const resultContent = this.resultOptions().map((optionName: string) => {
+                return (
+                    <Grid container direction="row">
+                        <Grid item xs={3}>
+                            <Typography variant="display1">{optionName}</Typography>
+                        </Grid>
+                        <Grid item xs={9}>
+                            <Typography variant="display1">{this.state.result[optionName]}</Typography>
+                        </Grid>
+                    </Grid>
+                )
+            
+            })
+
+
             return (
 
                 <Paper className="proposalResult">
-                    {this.state.result.yes},{this.state.result.no},{this.state.result.lost}  
+                    <Grid container direction="row">
+                        {resultContent}
+                    </Grid>
                 </Paper>
             )
         }
