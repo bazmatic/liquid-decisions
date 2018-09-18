@@ -22,6 +22,7 @@ export class UportLoginButton extends React.Component <Props, State> {
         this.state = {}
 	}
 	private async onClick() {
+        debugger
 		// Request credentials to login
 		this.credentials = await this.uport.requestCredentials({
 			requested: ['name', 'country', 'address'],

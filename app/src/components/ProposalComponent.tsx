@@ -44,6 +44,7 @@ export class ProposalComponent extends React.Component <Props, State> {
     } 
 
     private async vote(value: boolean) {
+        debugger
         let result = await LiquidDecisions.Contract.castVote(this.state.proposal.id, value)
     }
 
@@ -119,7 +120,7 @@ export class ProposalComponent extends React.Component <Props, State> {
                         subheader={this.getSubtitle()}
                     />
                     <CardContent>                  
-                        <Typography component="a" gutterBottom>                  
+                        <Typography component="div" gutterBottom>                  
                             <a href={this.state.proposal.uri}>More info</a>
                         </Typography>
                         {resultContent}  

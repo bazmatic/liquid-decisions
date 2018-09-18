@@ -34,7 +34,7 @@ const Pages = {
 	DelegateePage: 'DelegateePage',
 }
 
-const HomePage = Pages.ProposalListPage
+const HomePage = Pages.SignInPage
 
 //--------
 
@@ -220,6 +220,7 @@ export class App extends React.Component <{}, AppState> {
 	}
 
 	onUportCredentials(uportCredentials: any) {
+		debugger
 		this.setState({
 			uportCredentials,
 			ethereumAddress: mnidDecode(uportCredentials.address).address.toLowerCase(),
@@ -238,6 +239,9 @@ export class App extends React.Component <{}, AppState> {
 	}
 
 	async loadState() {
+		return
+	}
+	/*
 		var self = this;
 		try {
 			return new Promise((resolve, reject)=>{
@@ -259,7 +263,7 @@ export class App extends React.Component <{}, AppState> {
 			return undefined;
 		}	
 	}
-	
+	*/	
 	render() {
 
 		let content = ""
