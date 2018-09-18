@@ -119,7 +119,7 @@ export class ProposalComponent extends React.Component <Props, State> {
                         subheader={this.getSubtitle()}
                     />
                     <CardContent>                  
-                        <Typography component="a" gutterBottom>                  
+                        <Typography component="div" gutterBottom>                  
                             <a href={this.state.proposal.uri}>More info</a>
                         </Typography>
                         {resultContent}  

@@ -1,4 +1,6 @@
 //const Web3 = require('web3')
+import { Connect, SimpleSigner } from 'uport-connect'
+import { Credentials } from 'uport'
 import * as Ethers from 'ethers'
 import { resolve } from 'url';
 var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
@@ -6,16 +8,7 @@ var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.js
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
 //const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
 
-//const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
-/*
-var web3Writer: any
-if (window && window['web3']) {
-    web3Writer = window?window['web3']:web3Reader
-} 
-else {
-    web3Writer = web3Reader
-}
-*/
+
 
 const NETWORK_ID = "5777" //
 var SEC_DAY = 60 * 60 * 24
@@ -29,9 +22,11 @@ const contractReader = new Ethers.Contract(contractAddress, abi, contractReaderP
 //window['web3'].providers.HttpProvider.prototype.sendAsync = window['web3'].providers.HttpProvider.prototype.send;
 const contractWriterProvider = new Ethers.providers.Web3Provider(window['web3'].currentProvider)
 
+
 contractWriterProvider.sendAsync = contractWriterProvider.send
 const contractWriterSigner = contractWriterProvider.getSigner()
 const contractWriter = new Ethers.Contract(contractAddress, abi, contractWriterSigner)
+
 //web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
 
 //const contractWriter = uport.contract(abi).at(abi.deployedAddress);
@@ -68,8 +63,13 @@ export namespace Contract {
             fromBlock: STARTING_BLOCK,
             address: contractAddress
         }
-        let events: Array<any> = contractReaderProvider.getLogs(filter).filter((item)=>(item.returnValues.proposalId == proposalId))
-       // filter((item)=>(item.returnValues.proposalId == proposalId))
+        let events: Array<any> = (await contractReaderProvider.getLogs(filter)).filter(
+            (item)=>{
+                debugger
+                return (item.returnValues.proposalId == proposalId)
+            })
+        //debugger
+        // filter((item)=>(item.returnValues.proposalId == proposalId))
 
         /*let events: Array<any> = (await contractReader.getPastEvents(
             'allEvents',
