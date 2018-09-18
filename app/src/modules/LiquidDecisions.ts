@@ -1,11 +1,12 @@
 const Web3 = require('web3')
-import { resolve } from 'url';
+import { Connect, SimpleSigner } from 'uport-connect';
+import { Credentials } from 'uport'
+
 var contractJson = require('../../../ethereum/build/contracts/LiquidDecisions.json')
 
 //const web3 = new Web3('https://ropsten.infura.io/s1tfpFETHbLYVlvd7CRk');
-//const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
-const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
-
+//const web3Reader = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"))
+/*
 var web3Writer: any
 if (window && window['web3']) {
     web3Writer = window?window['web3']:web3Reader
@@ -13,13 +14,26 @@ if (window && window['web3']) {
 else {
     web3Writer = web3Reader
 }
-
-const NETWORK_ID = "5777" //
+*/
+const NETWORK_ID = '4'//"5777" //
+const NETWORK_NAME = 'rinkeby'
 var SEC_DAY = 60 * 60 * 24
 var STARTING_BLOCK = 1;
+
+export const uport = new Connect('Liquid Decisions', {
+    clientId: '2osjESc49UMhoFwb92W5t5EnuME5pi5Ljda',
+    network: NETWORK_NAME,
+    signer: SimpleSigner('e59d6fc020eb279b3655a52d48696ed4a37141333e546637a8d3e2b202cb6541')
+})
+
 const abi = contractJson.abi
-const contractReader: any = new web3Reader.eth.Contract(abi, contractJson.networks[NETWORK_ID].address)
-const contractWriter: any = (web3Reader == web3Writer)?contractReader:web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
+const contractAddress = contractJson.networks[NETWORK_ID].address
+
+const web3Reader = new Web3('https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk');
+const contractReader: any = new web3Reader.eth.Contract(abi, contractAddress)
+const contractWriter = uport.contract(abi).at(contractAddress);
+
+//const contractWriter: any = (web3Reader == web3Writer)?contractReader:web3Writer.eth.contract(abi).at(contractJson.networks[NETWORK_ID].address)
 
 //const contractWriter = uport.contract(abi).at(abi.deployedAddress);
 

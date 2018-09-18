@@ -1,11 +1,13 @@
-import * as React from 'react';
+import * as React from 'react'
+import { decode as mnidDecode } from 'mnid'
+
 import './App.css';
 import { DelegateeEdit } from './DelegateeEditComponent'
 import { DelegateeList } from './DelegateeListComponent'
 import { ProposalList } from './ProposalListComponent'
 import { ProposalNew } from './ProposalNewComponent'
 import { ProposalComponent } from './ProposalComponent'
-import { Proposal, Delegatee, Contract } from '../modules/LiquidDecisions'
+import { Proposal, Delegatee, Contract, uport } from '../modules/LiquidDecisions'
 
 import AppBar from '@material-ui/core/AppBar'
 //import Toolbar from '@material-ui/core/Toolbar'
@@ -20,8 +22,10 @@ const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
 import { Typography, Paper } from '@material-ui/core';
+import { UportLoginButton } from './UportLoginButton';
 
 const Pages = {
+	SignInPage: 'SignInPage',
 	HomePage: 'HomePage',
 	ProposalListPage: 'ProposalListPage',
 	ProposalNewPage: 'ProposalNewPage',
@@ -35,6 +39,8 @@ const HomePage = Pages.ProposalListPage
 //--------
 
 type AppState = {
+	uportCredentials?: any,
+	ethereumAddress?: string,
 	selectedTab: string,
     page: string,
     proposals: Proposal[],
@@ -47,9 +53,10 @@ export class App extends React.Component <{}, AppState> {
 	private pageLookup: any
 
 	constructor(props, context) {
-		super(props, context);
+		super(props, context)
 		this.state = {
-			//page: Pages.ProposalListPage,
+			ethereumAddress: undefined,
+			uportCredentials: undefined,
 			selectedTab: HomePage,
 			page: HomePage,
             proposals: [],
@@ -71,6 +78,10 @@ export class App extends React.Component <{}, AppState> {
 		this.pageLookup[Pages.ProposalNewPage] = {
 			content: this.proposalNewPage.bind(this),
 			menu: Pages.ProposalPage,
+		}
+		this.pageLookup[Pages.SignInPage] = {
+			content: this.signInPage.bind(this),
+			menu: undefined
 		}
 	}
 
@@ -117,7 +128,17 @@ export class App extends React.Component <{}, AppState> {
 		});
 	}
 
+	signInPage() {
+		return (
+			<div className="page">
+				<Paper>
+					<Typography variant="headline">Sign In</Typography>
+					<UportLoginButton uport={uport} credentials={this.state.uportCredentials} onCredentials={(creds)=>this.onUportCredentials(creds)}/>
 
+				</Paper>
+			</div>
+		)		
+	}
 	proposalPage() {
 		if (this.state.currentProposal !== undefined) {
 			return (
@@ -196,7 +217,48 @@ export class App extends React.Component <{}, AppState> {
 		console.log('Selected proposal', currentProposal)
 		this.setState({currentProposal})
 		this.choosePage(Pages.ProposalPage)
-    }
+	}
+
+	onUportCredentials(uportCredentials: any) {
+		this.setState({
+			uportCredentials,
+			ethereumAddress: mnidDecode(uportCredentials.address).address.toLowerCase(),
+		}, 
+		()=>{
+			console.log('Got ethereum address', this.state.ethereumAddress);
+			this.saveState()
+		});
+
+	}
+	
+	saveState() {
+		let stateCopy = JSON.parse(JSON.stringify(this.state));
+		const serialisedState = JSON.stringify(stateCopy);
+		localStorage.setItem('state', serialisedState);
+	}
+
+	async loadState() {
+		var self = this;
+		try {
+			return new Promise((resolve, reject)=>{
+				try {
+					const serialisedState = localStorage.getItem('state');
+					if (serialisedState !== null) {
+						let unserialisedState = JSON.parse(serialisedState);
+						self.setState(unserialisedState, ()=>{
+							resolve();
+						});
+					}
+				}
+				catch(err) {
+					reject(err);
+				}
+			})
+		}
+		catch (e) {
+			return undefined;
+		}	
+	}
 	
 	render() {
 
@@ -225,9 +287,7 @@ export class App extends React.Component <{}, AppState> {
 							<Tab value={Pages.ProposalListPage} label="Proposals" />						
 							<Tab value={Pages.ProposalPage} label="Propose" />
 							<Tab value={Pages.DelegateeListPage} label="Delegates" />
-							<Tab value={Pages.DelegateePage} label="Register" />
-							
-
+							<Tab value={Pages.DelegateePage} label="Register" />							
 						</Tabs>
 					</AppBar>
 				{content}

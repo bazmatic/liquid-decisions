@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from 'react'
 import * as LiquidDecisions from '../modules/LiquidDecisions'
 import { ProposalResolver, ProposalTally } from '../modules/ProposalResolver'
-import { Paper, Grid, Typography } from '@material-ui/core';
+import { Paper, Grid, Typography } from '@material-ui/core'
 
 const MS_DAY: number = 60000 * 60 * 24
 
@@ -59,13 +59,10 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
                             <Typography variant="display1">{this.state.result[optionName]}</Typography>
                         </Grid>
                     </Grid>
-                )
-            
+                )           
             })
 
-
             return (
-
                 <Paper className="proposalResult">
                     <Grid container direction="row">
                         {resultContent}
@@ -74,5 +71,4 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
             )
         }
     }
-
 }
