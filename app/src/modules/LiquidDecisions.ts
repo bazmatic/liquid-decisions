@@ -18,7 +18,7 @@ else {
 const NETWORK_ID = '4'//"5777" //
 const NETWORK_NAME = 'rinkeby'
 var SEC_DAY = 60 * 60 * 24
-var STARTING_BLOCK = 1;
+var STARTING_BLOCK = 3010000;
 
 export const uport = new Connect('Liquid Decisions', {
     clientId: '2osjESc49UMhoFwb92W5t5EnuME5pi5Ljda',
@@ -78,68 +78,23 @@ export namespace Contract {
     }
 
     export function makeProposal(title: string, uri: string, duration: number, tag: string): Promise<any> {  
-        return new Promise<any>((resolve, reject) => {
-            contractWriter.makeProposal(title, uri, duration * SEC_DAY, tag, (err: Error, data: any) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data)
-                }
-            })
-        })  
+        return contractWriter.makeProposal(title, uri, duration * SEC_DAY, tag)
     }
 
     export function registerDelegatee(name: string): Promise<any> {  
-        return new Promise<any>((resolve, reject) => {
-            contractWriter.registerDelegatee(name, (err: Error, data: any) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data)
-                }
-            })
-        })
+            return contractWriter.registerDelegatee(name)
     }
 
     export function castVote(proposalId: number, value: boolean) {
-        return new Promise<any>((resolve, reject) => {
-            contractWriter.castVote(proposalId, value, (err: Error, data: any) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data)
-                }
-            })
-        })
+        return contractWriter.castVote(proposalId, value)
     }
 
     export function delegateVote(proposalId: number, delegatee: string) {
-        return new Promise<any>((resolve, reject) => {
-            contractWriter.delegateVote(proposalId, delegatee, (err: Error, data: any) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data)
-                }
-            })
-        })
+        return contractWriter.delegateVote(proposalId, delegatee)
     }
 
     export function delegateTaggedVotes(tag: string, delegatee: string) {
-        return new Promise<any>((resolve, reject) => {
-            contractWriter.delegateTaggedVotes(tag, delegatee, (err: Error, data: any) => {
-                if (err) {
-                    reject(err)
-                }
-                else {
-                    resolve(data)
-                }
-            })
-        })
+        return contractWriter.delegateTaggedVotes(tag, delegatee)
     }
 
     export async function getDelegatees(): Promise<Delegatee[]> {

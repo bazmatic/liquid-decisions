@@ -23,10 +23,11 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
 import { Typography, Paper } from '@material-ui/core';
 import { UportLoginButton } from './UportLoginButton';
+import { resolve } from 'path';
 
 const Pages = {
-	SignInPage: 'SignInPage',
-	HomePage: 'HomePage',
+	//SignInPage: 'SignInPage',
+	//HomePage: 'HomePage',
 	ProposalListPage: 'ProposalListPage',
 	ProposalNewPage: 'ProposalNewPage',
 	ProposalPage: 'ProposalPage',
@@ -34,18 +35,23 @@ const Pages = {
 	DelegateePage: 'DelegateePage',
 }
 
-const HomePage = Pages.SignInPage
+const HomePage = Pages.ProposalListPage
 
 //--------
 
 type AppState = {
-	uportCredentials?: any,
-	ethereumAddress?: string,
-	selectedTab: string,
-    page: string,
-    proposals: Proposal[],
-	delegatees: Delegatee[],
-	currentProposal?: Proposal
+	uportCredentials?: any;
+	ethereumAddress?: string;
+	selectedTab: string;
+    page: string;
+    proposals: Proposal[];
+	delegatees: Delegatee[];
+	currentProposal?: Proposal;
+}
+
+type User = {
+	uportCredentials: any;
+	ethereumAddress: string;
 }
 
 export class App extends React.Component <{}, AppState> {
@@ -79,15 +85,18 @@ export class App extends React.Component <{}, AppState> {
 			content: this.proposalNewPage.bind(this),
 			menu: Pages.ProposalPage,
 		}
+		/*
 		this.pageLookup[Pages.SignInPage] = {
 			content: this.signInPage.bind(this),
 			menu: undefined
-		}
+		}*/
 	}
 
 	async componentDidMount() {	
-		this.choosePage(HomePage)
+		await this.loadState()
+		//this.choosePage(HomePage)
 		this.syncWithContract()
+		
     }
     
     private async syncWithContract() {
@@ -203,10 +212,10 @@ export class App extends React.Component <{}, AppState> {
 		this.choosePage(value)
 	}
     
-	choosePage(pageId) {
+	async choosePage(pageId) {
 		console.log("Choosing page", pageId)
 		if (Pages[pageId] && this.pageLookup[pageId]) {
-			this.setState({page: pageId, selectedTab: this.pageLookup[pageId].tab || pageId})
+			await this.setState({page: pageId, selectedTab: this.pageLookup[pageId].tab || pageId})
 		}
 		else {
 			console.warn("Unknown page", pageId)
@@ -220,7 +229,6 @@ export class App extends React.Component <{}, AppState> {
 	}
 
 	onUportCredentials(uportCredentials: any) {
-		debugger
 		this.setState({
 			uportCredentials,
 			ethereumAddress: mnidDecode(uportCredentials.address).address.toLowerCase(),
@@ -228,6 +236,7 @@ export class App extends React.Component <{}, AppState> {
 		()=>{
 			console.log('Got ethereum address', this.state.ethereumAddress);
 			this.saveState()
+			this.choosePage(HomePage)
 		});
 
 	}
@@ -238,67 +247,95 @@ export class App extends React.Component <{}, AppState> {
 		localStorage.setItem('state', serialisedState);
 	}
 
-	async loadState() {
-		return
+	async loadState(): Promise<any> {
+
+		return new Promise((resolve, reject) => {
+			try {
+				const serialisedState = localStorage.getItem('state');
+				if (serialisedState !== null) {
+					let unserialisedState = JSON.parse(serialisedState);
+					this.setState(unserialisedState, ()=>{
+						resolve();
+					});
+				}
+			}
+			catch(err) {
+				reject(err);
+			}
+		})
+		
+	
 	}
-	/*
-		var self = this;
-		try {
-			return new Promise((resolve, reject)=>{
-				try {
-					const serialisedState = localStorage.getItem('state');
-					if (serialisedState !== null) {
-						let unserialisedState = JSON.parse(serialisedState);
-						self.setState(unserialisedState, ()=>{
-							resolve();
-						});
-					}
-				}
-				catch(err) {
-					reject(err);
-				}
-			})
+
+	user(): User {
+		if (this.state.uportCredentials) {
+			return {
+				uportCredentials: this.state.uportCredentials,
+				ethereumAddress: this.state.ethereumAddress
+			}
 		}
-		catch (e) {
-			return undefined;
-		}	
+		else {
+			return null
+		}
 	}
-	*/	
+
+	getPageContent() {
+		return this.pageLookup[this.state.page].content()
+	}
+	
 	render() {
 
-		let content = ""
-		try {
-			content = this.pageLookup[this.state.page].content()
-		}
-		catch(e) {
-			console.error(`No page content found. Selected page: {$this.state.page}`)
-		}
 		const theme = this.getTheme()
-		
-		return (
-	
-			<div className="App">
-				<MuiThemeProvider theme={theme}>
-					<AppBar position="static">
-						<Tabs
-							value={this.state.selectedTab}
-							onChange={this.onChangeTab.bind(this)}
-							indicatorColor="secondary"
-							textColor="secondary"
-							scrollable
-							scrollButtons="auto"
-						>
-							<Tab value={Pages.ProposalListPage} label="Proposals" />						
-							<Tab value={Pages.ProposalPage} label="Propose" />
-							<Tab value={Pages.DelegateeListPage} label="Delegates" />
-							<Tab value={Pages.DelegateePage} label="Register" />							
-						</Tabs>
-					</AppBar>
-				{content}
-				</MuiThemeProvider>
-			</div>
-		)
+
+		if (!this.user() || !this.state.page) { //|| this.state.page == Pages.SignInPage) {
+			let content = this.signInPage()
+			return (
+				<div className="App">
+					<MuiThemeProvider theme={theme}>
+						{content}
+					</MuiThemeProvider>
+				</div>
+			)
+		}
+		else {
+			let content = ""
+			try {
+				content = this.getPageContent()
+			}
+			catch(e) {
+				console.error(`No page content found. Selected page: {$this.state.page}`)
+			}
+
+			return (	
+				<div className="App">
+					<MuiThemeProvider theme={theme}>
+						<AppBar position="static">
+							<Tabs
+								value={this.state.selectedTab}
+								onChange={this.onChangeTab.bind(this)}
+								indicatorColor="secondary"
+								textColor="secondary"
+								scrollable
+								scrollButtons="auto"
+							>
+								<Tab value={Pages.ProposalListPage} label="Proposals" />						
+								<Tab value={Pages.ProposalPage} label="Propose" />
+								<Tab value={Pages.DelegateeListPage} label="Delegates" />
+								<Tab value={Pages.DelegateePage} label="Register" />					
+							</Tabs>
+							<Typography variant="subheading" align="right">{this.user().uportCredentials.name}</Typography>	
+							
+						</AppBar>
+					{content}
+					</MuiThemeProvider>
+				</div>
+			)
+		}
+
 	}
+
+
+		
 }
 
 

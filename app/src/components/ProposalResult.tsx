@@ -51,7 +51,7 @@ export class ProposalResult extends React.Component <Props, { proposal: LiquidDe
         else {
             const resultContent = this.resultOptions().map((optionName: string) => {
                 return (
-                    <Grid container direction="row">
+                    <Grid container key={optionName} direction="row">
                         <Grid item xs={3}>
                             <Typography variant="display1">{optionName}</Typography>
                         </Grid>
