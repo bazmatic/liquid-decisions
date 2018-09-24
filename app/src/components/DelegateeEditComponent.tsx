@@ -5,17 +5,23 @@ import * as LiquidDecisions from '../modules/LiquidDecisions'
 
 type Props = {
     onSave: Function | undefined
+    delegatee: LiquidDecisions.Delegatee
     //onCancel: Function | undefined
 }
 
-export class DelegateeEdit extends React.Component <Props, any> {
+type State = {
+    delegatee: LiquidDecisions.Delegatee
+}
+
+export class DelegateeEdit extends React.Component <Props, State> {
     key: string
+    delegatee: LiquidDecisions.Delegatee
 
 	constructor(props) {
-		super(props);
+        super(props);
+        this.delegatee = props.delegatee || {}
 		this.state = {
-            name: '',
-            email: '',     
+            delegatee: this.delegatee
         }
     }
 
@@ -25,13 +31,15 @@ export class DelegateeEdit extends React.Component <Props, any> {
 
     handleChange(event: any) {
         //this.setState({value: event.target.value})
-        let stateUpdate = {}
-        stateUpdate[event.target.name] = event.target.value
-        this.setState(stateUpdate)
+        let fieldName = event.target.name
+        let fieldValue = event.target.value
+        this.delegatee[fieldName] = fieldValue
+        this.setState({delegatee: this.delegatee})
     }
 
     async save() {
-        let result = await LiquidDecisions.Contract.registerDelegatee(this.state.name)
+        //debugger
+        let result = await LiquidDecisions.Contract.registerDelegatee(this.state.delegatee)
         console.log("Sent delegatee:", result)
         if (this.props.onSave !== undefined) {
             this.props.onSave(result)
@@ -48,10 +56,13 @@ export class DelegateeEdit extends React.Component <Props, any> {
                 spacing={24}
                 >
                     <Grid item xs={12}>
-                        <TextField label="Your name" type="text" name="name" value={this.state.name} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                        <TextField label="Your name" type="text" name="name" value={this.state.delegatee.name} onChange={this.handleChange.bind(this)} fullWidth={true} />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField label="Your email" name="email" value={this.state.uri} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                        <TextField label="Profile link (TMNT)" name="backgroundUrl" value={this.state.delegatee.backgroundUrl} onChange={this.handleChange.bind(this)} fullWidth={true} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField label="Image URL" name="imageUrl" value={this.state.delegatee.imageUrl} onChange={this.handleChange.bind(this)} fullWidth={true} />
                     </Grid>
                         
                     <Grid item xs={6}>

@@ -44,7 +44,6 @@ export class ProposalComponent extends React.Component <Props, State> {
     } 
 
     private async vote(value: boolean) {
-        debugger
         let result = await LiquidDecisions.Contract.castVote(this.state.proposal.id, value)
     }
 

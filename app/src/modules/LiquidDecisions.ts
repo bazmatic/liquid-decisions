@@ -59,6 +59,8 @@ export type Proposal = {
 export type Delegatee = {
     name: string
     addr: string
+    backgroundUrl: string
+    imageUrl?: string
     key?: number
 }
 
@@ -81,8 +83,8 @@ export namespace Contract {
         return contractWriter.makeProposal(title, uri, duration * SEC_DAY, tag)
     }
 
-    export function registerDelegatee(name: string): Promise<any> {  
-            return contractWriter.registerDelegatee(name)
+    export function registerDelegatee(delegatee: Delegatee): Promise<any> {  
+        return contractWriter.registerDelegatee(delegatee.name, delegatee.backgroundUrl, delegatee.imageUrl)
     }
 
     export function castVote(proposalId: number, value: boolean) {
@@ -104,7 +106,7 @@ export namespace Contract {
                 let delegatees: Delegatee[] = []
         
                 for (let i=0; i< count; i++) {
-                    let delegatee: Delegatee = await contractReader.methods.delegatees(i).call()
+                    let delegatee: Delegatee = await contractReader.methods.getDelegatee(i).call()
                     delegatee.key = i;
                     delegatees.push(delegatee);
                 }

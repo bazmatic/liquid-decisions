@@ -16,14 +16,14 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 var ContractBuild = require('../../../ethereum/build/contracts/LiquidDecisions.json')
-const threadAbi = ContractBuild.abi;
-const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
+//const threadAbi = ContractBuild.abi;
+//const APP_ADDRESS = '2oiLnkv2D1Pd5YBpW1TeDCLn68WazCsoTPn'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import * as themeColors from '@material-ui/core/colors'
 import { Typography, Paper } from '@material-ui/core';
 import { UportLoginButton } from './UportLoginButton';
-import { resolve } from 'path';
+
 
 const Pages = {
 	//SignInPage: 'SignInPage',
@@ -100,7 +100,15 @@ export class App extends React.Component <{}, AppState> {
     }
     
     private async syncWithContract() {
-		let delegatees = await Contract.getDelegatees()
+		let delegatees = (await Contract.getDelegatees())
+			//TODO: Find out why uPort is apparently adding single quotes
+			.map((item: Delegatee)=>{
+				item.name = item.name.replace(/'/g, "")
+				item.backgroundUrl = item.backgroundUrl.replace(/'/g, "")
+				item.imageUrl = item.imageUrl.replace(/'/g, "")
+				return item
+			}
+		)
 		let proposals = await Contract.getProposals()
         this.setState({delegatees, proposals}) 
 	}
@@ -192,18 +200,22 @@ export class App extends React.Component <{}, AppState> {
 				<Paper>
 					<Typography variant="headline">Registered Delegates</Typography>
 				</Paper>
-     			<DelegateeList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} />           				
+     			<DelegateeList delegatees={this.state.delegatees} />           				
 			</div>
 		)
 	}
 
 	delegateePage() {
+		//Get delegate that matches my address
+		let delegatee = this.state.delegatees.find((item: Delegatee )=>{
+			return item.addr.toLowerCase() === this.state.ethereumAddress.toLowerCase()
+		})
 		return (
 			<div className="page">
 				<Paper>
 					<Typography variant="headline">Register as a Delegate</Typography>
 				</Paper>
-                <DelegateeEdit onSave={this.choosePage.bind(this, HomePage)}  />					
+                <DelegateeEdit delegatee={delegatee} onSave={this.choosePage.bind(this, HomePage)}  />					
 			</div>
 		)
 	}
@@ -227,6 +239,8 @@ export class App extends React.Component <{}, AppState> {
 		this.setState({currentProposal})
 		this.choosePage(Pages.ProposalPage)
 	}
+
+
 
 	onUportCredentials(uportCredentials: any) {
 		this.setState({
@@ -287,7 +301,7 @@ export class App extends React.Component <{}, AppState> {
 
 		const theme = this.getTheme()
 
-		if (!this.user() || !this.state.page) { //|| this.state.page == Pages.SignInPage) {
+		if (!this.user() || !this.state.page) {
 			let content = this.signInPage()
 			return (
 				<div className="App">

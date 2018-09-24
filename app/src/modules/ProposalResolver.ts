@@ -17,11 +17,6 @@ export type Proposal = {
     tag: string  
 }
 
-export type Delegatee = {
-    name: string
-    addr: string
-}
-
 export type ProposalTally = {
     yes: number
     no: number
