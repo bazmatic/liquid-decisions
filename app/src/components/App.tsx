@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { decode as mnidDecode } from 'mnid'
+import IpfsAPI from 'ipfs-api'
 
 import './App.css';
 import { DelegateeEdit } from './DelegateeEditComponent'
@@ -57,6 +58,7 @@ type User = {
 export class App extends React.Component <{}, AppState> {
 
 	private pageLookup: any
+	private ipfsApi: any
 
 	constructor(props, context) {
 		super(props, context)
@@ -85,6 +87,7 @@ export class App extends React.Component <{}, AppState> {
 			content: this.proposalNewPage.bind(this),
 			menu: Pages.ProposalPage,
 		}
+		this.ipfsApi = IpfsAPI('ipfs.infura.io', 5001, {protocol: 'https'});
 		/*
 		this.pageLookup[Pages.SignInPage] = {
 			content: this.signInPage.bind(this),
@@ -163,7 +166,7 @@ export class App extends React.Component <{}, AppState> {
 					<Paper>
 						<Typography variant="headline">Proposal</Typography>
 					</Paper>
-					<ProposalComponent showVoteUi={true} showSelectUi={false} delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
+					<ProposalComponent ipfsApi={this.ipfsApi} showVoteUi={true} showSelectUi={false} delegatees={this.state.delegatees} proposal={this.state.currentProposal} />					
 				</div>
 			)
 		}
@@ -179,7 +182,7 @@ export class App extends React.Component <{}, AppState> {
 				<Paper>
 					<Typography variant="headline">Current Proposals</Typography>
 				</Paper>
-                <ProposalList onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} proposals={this.state.proposals} />					
+                <ProposalList ipfsApi={this.ipfsApi} onSelect={this.onSelectProposal.bind(this)} delegatees={this.state.delegatees} proposals={this.state.proposals} />					
 			</div>
 		)
 	}
@@ -200,7 +203,7 @@ export class App extends React.Component <{}, AppState> {
 				<Paper>
 					<Typography variant="headline">Registered Delegates</Typography>
 				</Paper>
-     			<DelegateeList delegatees={this.state.delegatees} />           				
+     			<DelegateeList selector={false} ipfsApi={this.ipfsApi} delegatees={this.state.delegatees} />           				
 			</div>
 		)
 	}

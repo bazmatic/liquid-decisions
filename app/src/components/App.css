@@ -1,3 +1,23 @@
 body {
     background-color: #EEE
 }
+
+.IpfsImageDrop .iid-dropZone {
+    border: 1px dotted black;
+    height: 100px;
+}
+
+.IpfsImageDrop .iid-dropZone.ready {
+    /* The drop zone is ready for a file to be dropped, or a dropped file has been successfully uploaded. */
+    border: 1px solid red;
+    background-color: #F0F0F0
+}
+
+.IpfsImageDrop .iid-dropZone.draggingOver {
+    /* A file has been dragged over the drop zone. */
+    background-color: #808080
+}
+
+.IpfsImageDrop .iid-dropZone.uploading {
+    /* A file has been dropped into the drop zone and is being uploaded. */
+}

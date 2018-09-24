@@ -6,7 +6,8 @@ import { Paper, Typography, Grid } from '@material-ui/core';
 type Props = {
     proposals: Proposal[],
     delegatees: Delegatee[],
-    onSelect: Function
+    onSelect: Function,
+    ipfsApi: any,
 }
 
 export class ProposalList extends React.Component <Props, { proposals: Proposal[], delegatees: Delegatee[] }> {
@@ -32,7 +33,7 @@ export class ProposalList extends React.Component <Props, { proposals: Proposal[
             number ++;
             return (
                 <Grid item key={proposalData.id}>
-                    <ProposalComponent showSelectUi={true} showVoteUi={false} onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} delegatees={this.state.delegatees}/>
+                    <ProposalComponent ipfsApi={this.props.ipfsApi} showSelectUi={true} showVoteUi={false} onSelect={this.selectItem.bind(this, proposalData)} proposal={proposalData} delegatees={this.state.delegatees}/>
                 </Grid>
 
             )

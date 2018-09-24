@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack --config=./app/webpack.config.js --context=./app --mode=development",
-    "start-dev": "webpack-dev-server --config=./app/webpack.config.js  --context=./app --mode=development",
+    "start-dev": "webpack-dev-server --https --config=./app/webpack.config.js  --context=./app --mode=development",
     "compile": "truffle compile",
     "deploy": "truffle --reset deploy"
   },
@@ -34,6 +34,8 @@
     "abi-decoder": "^1.2.0",
     "bignumber.js": "^7.2.1",
     "common-js": "^0.3.8",
+    "ipfs-api": "^24.0.2",
+    "ipfs-image-drop": "latest",
     "mnid": "^0.1.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",

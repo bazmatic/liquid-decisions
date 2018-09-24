@@ -9,6 +9,7 @@ const MS_HOUR: number = 60000 * 60
 const MS_DAY: number = MS_HOUR * 24
 
 type Props = {
+    ipfsApi: any,
     proposal: LiquidDecisions.Proposal,
     delegatees: LiquidDecisions.Delegatee[],
     showVoteUi?: boolean
@@ -93,7 +94,6 @@ export class ProposalComponent extends React.Component <Props, State> {
             let expiresInHours = Math.floor(this.getExpiry() / MS_HOUR)
             return `Closes in ${expiresInHours} hours`         
         }
-        
     }
 
     private getExpiry(): number {
