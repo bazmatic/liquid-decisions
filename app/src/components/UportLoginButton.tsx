@@ -31,6 +31,7 @@ export class UportLoginButton extends React.Component <Props, State> {
                 requested: ['name', 'country', 'address'],
                 notifications: true // We want this if we want to recieve credentials
             });
+            console.log(this.credentials);
             this.props.onCredentials(this.credentials);
         }
         catch (e) {
@@ -38,6 +39,26 @@ export class UportLoginButton extends React.Component <Props, State> {
         }
         this.setState({loading: false})		
     }
+
+    /*private async onClick() {
+        // Request credentials to login
+        this.setState({loading: true})
+        try {
+            this.uport.requestDisclosure({
+                requested: ['name', 'country', 'address'],
+                notifications: true // We want this if we want to receive credentials
+            });
+            this.uport.onResponse('dislosureReq').then(res => {
+                console.log(res);
+                this.props.onCredentials(res);
+            })
+            
+        }
+        catch (e) {
+            console.error(e)
+        }
+        this.setState({loading: false})		
+    }*/
     
     public render(): React.ReactNode {
         return (

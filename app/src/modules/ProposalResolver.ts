@@ -42,8 +42,8 @@ export class ProposalResolver {
 
     private registerDelegation(voterAddress: string, delegateeAddress: string) {
         
-       let voter = this.getVoter(voterAddress)
-       let delegatee = this.getVoter(delegateeAddress)
+        let voter = this.getVoter(voterAddress)
+        let delegatee = this.getVoter(delegateeAddress)
 
         if (this.hasCircularDelegation(voter, delegatee)) {           
             console.warn("Found circular delegation. Not delegating.")
@@ -122,7 +122,6 @@ export class ProposalResolver {
         }
     }
 
-    //TODO: Eliminate delegation loops
     private _reapDelegators(delegators: Array<Voter>): number{
         let result = delegators.length
         delegators.forEach((delegator: Voter)=>{

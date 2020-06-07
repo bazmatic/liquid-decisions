@@ -21,7 +21,7 @@ module.exports = {
   networks: {
     rinkeby: {
       provider: function() { 
-        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/s1tfpFETHbLYVlvd7CRk') 
+        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/f14f652a2fed48aba9076ebee00cb555') 
       },
       network_id: '3',
       gas: 4500000,
@@ -29,10 +29,15 @@ module.exports = {
     },
     development: {
         host: "localhost",
-        port: 8545,
+        port: 7545,
         network_id: "5777"
     }
 
   },
+  compilers: {
+    solc: {
+      version: "0.5.17"
+    }
+  }
 
 };

@@ -1,0 +1,18 @@
+# This config should be placed in following path:
+#   $HOME/Library/Application Support/io.parity.ethereum/config.toml
+
+[account]
+# Kovan: [0xa2e2bb7B73C9DC0BFdF005fF63013d90C1Ef39E2] you'll be able to send transactions without password.
+unlock = ["0xb64f04a62dd592bd031489c04e86750dd50ad553"]
+# File at ./passwords.txt should contain passwords to unlock your accounts. One password per line.
+password = ["./passwords.txt"]
+
+[network]
+# Enable or disable new peers discovery.
+discovery = false
+# Specify node secret key (64-char hex or input to SHA3)
+
+
+[rpc]
+# Only selected APIs will be exposed over this interface.
+apis = ["web3", "eth", "pubsub", "net", "parity", "private", "parity_pubsub", "traces", "rpc", "shh", "shh_pubsub", "personal", "parity_accounts", "secretstore", "signer"]
